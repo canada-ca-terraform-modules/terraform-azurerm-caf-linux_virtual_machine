@@ -25,8 +25,8 @@ Optional (depending on options configured):
 ## Usage
 
 ```terraform
-module "dockerweb" {
-  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-basiclinuxvm-v2?ref=20200421.1"
+module "linuxvm" {
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm_linux_virtual_machine?ref=20200506.3"
 
   name                              = "dockerweb"
   resource_group_name               = "some-RG-Name"

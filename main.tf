@@ -149,19 +149,20 @@ resource azurerm_virtual_machine VM {
 */
 
 resource azurerm_linux_virtual_machine VM {
-  name                  = var.name
-  depends_on            = [var.vm_depends_on]
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
-  computer_name         = var.name
-  custom_data           = var.custom_data
-  size                  = var.vm_size
-  priority              = var.priority
-  eviction_policy       = var.eviction_policy
-  network_interface_ids = [azurerm_network_interface.NIC.id]
-  availability_set_id   = var.availability_set_id
+  name                            = var.name
+  depends_on                      = [var.vm_depends_on]
+  location                        = var.location
+  resource_group_name             = var.resource_group_name
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password
+  disable_password_authentication = var.disable_password_authentication
+  computer_name                   = var.name
+  custom_data                     = var.custom_data
+  size                            = var.vm_size
+  priority                        = var.priority
+  eviction_policy                 = var.eviction_policy
+  network_interface_ids           = [azurerm_network_interface.NIC.id]
+  availability_set_id             = var.availability_set_id
   dynamic "admin_ssh_key" {
     for_each = local.ssh_key
     content {
