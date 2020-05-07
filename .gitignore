@@ -1,0 +1,6 @@
+test/.terraform.tfstate.lock.info
+test/terraform.tfstate.backup
+test/terraform.tfstate
+test/.terraform
+test/crash.log
+.terraform/plugins/windows_amd64/lock.json
