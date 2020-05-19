@@ -9,4 +9,5 @@ locals {
   fixname2        = replace(local.fixname, "_", "")
   fixname3        = substr("${local.fixname2}diag", 0, 16)
   storageName     = lower("${local.fixname3}${local.unique}")
+  eviction_policy = var.priority == "Regular" ? null : var.eviction_policy
 }
