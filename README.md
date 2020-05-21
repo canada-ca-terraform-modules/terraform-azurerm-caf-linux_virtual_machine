@@ -26,7 +26,7 @@ Optional (depending on options configured):
 
 ```terraform
 module "linuxvm" {
-  source = "github.com/canada-ca-terraform-modules/terraform-azurerm_linux_virtual_machine?ref=20200506.3"
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm_linux_virtual_machine?ref=20200521.1"
 
   name                              = "dockerweb"
   resource_group_name               = "some-RG-Name"
@@ -295,4 +295,5 @@ shutdownConfig = {
 | -------- | ---------- | -------------------------------------------------------------------------------------------- |
 | 20200506 | 20200506.1 | 1st commit              |
 | 20200519 | 20200519.1 | Fix issue with non spot instance |
+| 20200521 | 20200521.1 | Make disk encryption dependant on data disk creation completion |
 

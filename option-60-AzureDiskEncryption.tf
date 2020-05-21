@@ -19,7 +19,7 @@ resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
 
   count                      = var.encryptDisks == null ? 0 : 1
   name                       = "AzureDiskEncryption"
-  depends_on                 = [azurerm_virtual_machine_extension.DAAgentForLinux]
+  depends_on                 = [azurerm_virtual_machine_extension.DAAgentForLinux, azurerm_virtual_machine_data_disk_attachment.data_disks]
   virtual_machine_id         = azurerm_linux_virtual_machine.VM.id
   publisher                  = "Microsoft.Azure.Security"
   type                       = "AzureDiskEncryptionForLinux"
