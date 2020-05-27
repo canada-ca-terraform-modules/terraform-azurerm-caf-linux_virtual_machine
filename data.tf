@@ -5,5 +5,6 @@ data "azurerm_subnet" "subnet" {
 }
 
 data "azurerm_resource_group" "resourceGroup" {
+  depends_on = [var.resource_group_name]
   name       = var.resource_group_name
 }
