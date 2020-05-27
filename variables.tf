@@ -110,8 +110,8 @@ variable "public_ip" {
   default     = false
 }
 
-variable "resource_group_name" {
-  description = "Name of the resourcegroup that will contain the VM resources"
+variable "resource_group" {
+  description = "Resourcegroup object that will contain the VM resources"
 }
 
 variable "admin_username" {

@@ -17,7 +17,7 @@ variable "shutdownConfig" {
 resource "azurerm_template_deployment" "autoshutdown" {
   count               = var.shutdownConfig == null ? 0 : 1
   name                = "autoshutdown"
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.resource_group.name
   depends_on          = [azurerm_linux_virtual_machine.VM]
   template_body       = <<DEPLOY
 {
