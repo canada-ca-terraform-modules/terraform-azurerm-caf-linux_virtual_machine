@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine_extension" "OmsAgentForLinux" {
   virtual_machine_id         = azurerm_linux_virtual_machine.VM.id
   publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
   type                       = "OmsAgentForLinux"
-  type_handler_version       = "1.7"
+  type_handler_version       = "1.12"
   auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
