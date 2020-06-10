@@ -15,10 +15,12 @@ variable "monitoringAgent" {
 
 resource "azurerm_virtual_machine_extension" "OmsAgentForLinux" {
 
-  count                      = var.monitoringAgent == null ? 0 : 1
+  count                      = var.monitoringAgent != null && var.deploy ? 1 : 0
   name                       = "OmsAgentForLinux"
-  depends_on                 = [azurerm_template_deployment.autoshutdown]
-  virtual_machine_id         = azurerm_linux_virtual_machine.VM.id
+  depends_on                 = [
+    azurerm_template_deployment.autoshutdown
+  ]
+  virtual_machine_id         = azurerm_linux_virtual_machine.VM[0].id
   publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
   type                       = "OmsAgentForLinux"
   type_handler_version       = "1.12"

@@ -6,12 +6,15 @@ variable "dependancyAgent" {
 
 resource "azurerm_virtual_machine_extension" "DAAgentForLinux" {
 
-  count                      = var.dependancyAgent == null ? 0 : 1
+  count                      = var.dependancyAgent != null && var.deploy ? 1 : 0
   name                       = "DAAgentForLinux"
-  virtual_machine_id         = azurerm_linux_virtual_machine.VM.id
+  virtual_machine_id         = azurerm_linux_virtual_machine.VM[0].id
   publisher                  = "Microsoft.Azure.Monitoring.DependencyAgent"
   type                       = "DependencyAgentLinux"
   type_handler_version       = "9.5"
   auto_upgrade_minor_version = true
-  depends_on                 = [azurerm_virtual_machine_extension.OmsAgentForLinux]
+  depends_on                 = [
+    azurerm_template_deployment.autoshutdown,
+    azurerm_virtual_machine_extension.OmsAgentForLinux
+  ]
 }

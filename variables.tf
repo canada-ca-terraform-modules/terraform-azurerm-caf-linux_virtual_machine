@@ -31,6 +31,11 @@ variable "tags" {
   }
 }
 
+variable "deploy" {
+  description = "Should resources in this module be deployed"
+  default = true
+}
+
 variable "name" {
   description = "Name of the linux vm"
 }
