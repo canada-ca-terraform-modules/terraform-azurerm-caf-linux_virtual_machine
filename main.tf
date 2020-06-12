@@ -128,6 +128,14 @@ resource azurerm_linux_virtual_machine VM {
     }
   }
   tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      admin_username,
+      admin_password,
+    ]
+  }
 }
 
 resource azurerm_managed_disk data_disks {
