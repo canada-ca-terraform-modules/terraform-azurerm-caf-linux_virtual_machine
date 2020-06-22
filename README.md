@@ -302,3 +302,4 @@ shutdownConfig = {
 |          |            | This new version will require the redeployment of any resources deployed with previous versions due   |
 |          |            | to counter index. Sorry ;-(                                                                           |
 | 20200612 | 20200612.1 | Implement lifecycle to prevent redeploying VM resources on username and password change in the config |
+| 20200622 | 20200622.1 | Make AADLoginForWindows and DAAgent extensions type bool                                              |
