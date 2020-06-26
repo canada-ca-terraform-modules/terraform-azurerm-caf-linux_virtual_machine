@@ -58,16 +58,10 @@ variable "data_disk_sizes_gb" {
   default     = []
 }
 
-variable "nic_subnetName" {
-  description = "Name of the subnet to which the VM NIC will connect to"
+variable "subnet" {
+  description = "subnet object to which the VM NIC will connect to"
 }
 
-variable "nic_vnetName" {
-  description = "Name of the VNET the subnet is part of"
-}
-variable "nic_resource_group_name" {
-  description = "Name of the resourcegroup containing the VNET"
-}
 variable "dnsServers" {
   description = "List of DNS servers IP addresses to use for this NIC, overrides the VNet-level server list"
   default     = null

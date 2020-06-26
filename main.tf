@@ -66,7 +66,7 @@ resource azurerm_network_interface NIC {
     for_each = var.nic_ip_configuration.private_ip_address_allocation
     content {
       name                          = "ipconfig${ip_configuration.key + 1}"
-      subnet_id                     = data.azurerm_subnet.subnet.id
+      subnet_id                     = var.subnet.id
       private_ip_address            = var.nic_ip_configuration.private_ip_address[ip_configuration.key]
       private_ip_address_allocation = var.nic_ip_configuration.private_ip_address_allocation[ip_configuration.key]
       public_ip_address_id          = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[ip_configuration.key].id : ""
