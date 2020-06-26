@@ -1,7 +1,7 @@
 resource azurerm_network_security_group NSG {
   count               = var.deploy && var.use_nic_nsg ? 1 : 0
-  name                = "${var.name}-nsg"
-  location            = var.location
+  name                = "${local.vm-name}-nsg"
+  location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   dynamic "security_rule" {
     for_each = [for s in var.security_rules : {
@@ -36,7 +36,7 @@ resource "azurerm_storage_account" "boot_diagnostic" {
   count                    = var.deploy && var.boot_diagnostic ? 1 : 0
   name                     = local.storageName
   resource_group_name      = var.resource_group.name
-  location                 = var.location
+  location                 = var.resource_group.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -44,8 +44,8 @@ resource "azurerm_storage_account" "boot_diagnostic" {
 # If public_ip is true then create resource. If not then do not create any
 resource azurerm_public_ip VM-EXT-PubIP {
   count               = var.deploy && var.public_ip ? length(var.nic_ip_configuration.private_ip_address_allocation) : 0
-  name                = "${var.name}-pip${count.index + 1}"
-  location            = var.location
+  name                = "${local.vm-name}-pip${count.index + 1}"
+  location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
@@ -54,9 +54,9 @@ resource azurerm_public_ip VM-EXT-PubIP {
 
 resource azurerm_network_interface NIC {
   count                         = var.deploy ? 1 : 0
-  name                          = "${var.name}-nic1"
+  name                          = "${local.vm-name}-nic1"
   depends_on                    = [var.nic_depends_on]
-  location                      = var.location
+  location                      = var.resource_group.location
   resource_group_name           = var.resource_group.name
   enable_ip_forwarding          = var.nic_enable_ip_forwarding
   enable_accelerated_networking = var.nic_enable_accelerated_networking
@@ -79,14 +79,14 @@ resource azurerm_network_interface NIC {
 
 resource azurerm_linux_virtual_machine VM {
   count                           = var.deploy ? 1 : 0
-  name                            = var.name
+  name                            = local.vm-name
   depends_on                      = [var.vm_depends_on]
-  location                        = var.location
+  location                        = var.resource_group.location
   resource_group_name             = var.resource_group.name
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
-  computer_name                   = var.name
+  computer_name                   = local.vm-name
   custom_data                     = var.custom_data
   size                            = var.vm_size
   priority                        = var.priority
@@ -116,7 +116,7 @@ resource azurerm_linux_virtual_machine VM {
   }
   provision_vm_agent = true
   os_disk {
-    name                 = "${var.name}-osdisk1"
+    name                 = "${local.vm-name}-osdisk1"
     caching              = var.storage_os_disk.caching
     storage_account_type = var.os_managed_disk_type
     disk_size_gb         = var.storage_os_disk.disk_size_gb
@@ -139,10 +139,10 @@ resource azurerm_linux_virtual_machine VM {
 }
 
 resource azurerm_managed_disk data_disks {
-  count = length(var.data_disk_sizes_gb) * ( var.deploy == true ? 1 : 0 )
+  count = length(var.data_disk_sizes_gb) * (var.deploy == true ? 1 : 0)
 
-  name                 = "${var.name}-datadisk${count.index + 1}"
-  location             = var.location
+  name                 = "${local.vm-name}-datadisk${count.index + 1}"
+  location             = var.resource_group.location
   resource_group_name  = var.resource_group.name
   storage_account_type = var.data_managed_disk_type
   create_option        = "Empty"
@@ -150,7 +150,7 @@ resource azurerm_managed_disk data_disks {
 }
 
 resource azurerm_virtual_machine_data_disk_attachment data_disks {
-  count = length(var.data_disk_sizes_gb) * ( var.deploy == true ? 1 : 0 )
+  count = length(var.data_disk_sizes_gb) * (var.deploy == true ? 1 : 0)
 
   managed_disk_id    = azurerm_managed_disk.data_disks[count.index].id
   virtual_machine_id = azurerm_linux_virtual_machine.VM[0].id

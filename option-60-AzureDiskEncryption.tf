@@ -17,9 +17,9 @@ resource "random_uuid" "SequenceVersion" {}
 
 resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
 
-  count                      = var.encryptDisks != null && var.deploy ? 1 : 0
-  name                       = "AzureDiskEncryption"
-  depends_on                 = [
+  count = var.encryptDisks != null && var.deploy ? 1 : 0
+  name  = "AzureDiskEncryption"
+  depends_on = [
     azurerm_template_deployment.autoshutdown,
     azurerm_virtual_machine_extension.OmsAgentForLinux,
     azurerm_virtual_machine_extension.DAAgentForLinux,

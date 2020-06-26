@@ -48,7 +48,10 @@ module "linuxvm" {
 
 | Name                                    | Type   | Required | Value                                                                                                                                                                                                                  |
 | --------------------------------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name                                    | string | yes      | Name of the vm                                                                                                                                                                                                         |
+| env                                     | string | yes      | 4 chars env name vm                                                                                                                                                                                                    |
+| serverType                              | string | no       | 3 chars server type according to naming convention. Default: SRV                                                                                                                                                       |
+| userDefinedString                       | string | yes      | User defined portion of the server name. Up to 7 chars minus the postfix lenght                                                                                                                                        |
+| postfix                                 | string | no       | Desired postfix value for the name. Max 3 chars.                                                                                                                                                                       |
 | resource_group                          | object | yes      | Resourcegroup object that will contain the VM resources                                                                                                                                                                |
 | admin_username                          | string | yes      | Name of the VM admin account                                                                                                                                                                                           |
 | admin_password                          | string | yes      | Password of the VM admin account                                                                                                                                                                                       |
@@ -289,17 +292,3 @@ shutdownConfig = {
   autoShutdownNotificationStatus = "Disabled"
 }
 ```
-
-## History
-
-| Date     | Release    | Change                                                                                                |
-| -------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| 20200506 | 20200506.1 | 1st commit                                                                                            |
-| 20200519 | 20200519.1 | Fix issue with non spot instance                                                                      |
-| 20200521 | 20200521.1 | Make disk encryption dependant on data disk creation completion                                       |
-| 20200528 | 20200528.1 | Make the resource_group variable an object vs a string to fix dependancy issue                        |
-| 20200610 | 20200610.1 | Support the ability to disable the deployment of a module resources using a variable.                 |
-|          |            | This new version will require the redeployment of any resources deployed with previous versions due   |
-|          |            | to counter index. Sorry ;-(                                                                           |
-| 20200612 | 20200612.1 | Implement lifecycle to prevent redeploying VM resources on username and password change in the config |
-| 20200622 | 20200622.1 | Make AADLoginForWindows and DAAgent extensions type bool                                              |

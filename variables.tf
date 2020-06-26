@@ -18,11 +18,6 @@ shutdownConfig = {
 Those can be set optionally if you want to deploy with optional features
 */
 
-variable "location" {
-  description = "Location of the network"
-  default     = "canadacentral"
-}
-
 variable "tags" {
   description = "Tags that will be associated to VM resources"
   default = {
@@ -33,11 +28,29 @@ variable "tags" {
 
 variable "deploy" {
   description = "Should resources in this module be deployed"
-  default = true
+  default     = true
 }
 
-variable "name" {
-  description = "Name of the linux vm"
+variable "env" {
+  description = "4 chars env name"
+  type        = string
+}
+
+variable "serverType" {
+  description = "3 chars server type"
+  type        = string
+  default     = "SRV"
+}
+
+variable "userDefinedString" {
+  description = "User defined portion of the server name. Up to 8 chars minus the postfix lenght"
+  type        = string
+}
+
+variable "postfix" {
+  description = "(Optional) Desired postfix value for the name. Max 3 chars."
+  type        = string
+  default     = ""
 }
 
 variable "data_disk_sizes_gb" {
