@@ -84,7 +84,7 @@ variable "nic_ip_configuration" {
 
 variable "load_balancer_backend_address_pools_ids" {
   description = "List of Load Balancer Backend Address Pool IDs references to which this NIC belongs"
-  default     = [[], [], [], [], [], [], [], [], [], [], [], []]
+  default     = []
 }
 
 variable "security_rules" {
@@ -115,6 +115,11 @@ variable "security_rules" {
       destination_address_prefix = "*"
     }
   ]
+}
+
+variable "asg" {
+  description = "ASG resource to join the NIC to"
+  default     = null
 }
 
 variable "public_ip" {
@@ -190,6 +195,11 @@ variable "storage_os_disk" {
 variable "license_type" {
   description = "BYOL license type for those with Azure Hybrid Benefit"
   default     = null
+}
+
+variable "provision_vm_agent" {
+  type    = bool
+  default = true
 }
 
 variable "boot_diagnostic" {
