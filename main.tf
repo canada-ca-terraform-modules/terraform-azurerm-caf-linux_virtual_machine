@@ -132,7 +132,7 @@ resource azurerm_linux_virtual_machine VM {
       publisher = local.plan[0].publisher
     }
   }
-  provision_vm_agent = true
+  provision_vm_agent = var.provision_vm_agent
   os_disk {
     name                 = "${local.vm-name}-osdisk1"
     caching              = var.storage_os_disk.caching

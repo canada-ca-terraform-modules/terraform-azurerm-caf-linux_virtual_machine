@@ -197,6 +197,11 @@ variable "license_type" {
   default     = null
 }
 
+variable "provision_vm_agent" {
+  type    = bool
+  default = true
+}
+
 variable "boot_diagnostic" {
   default = false
 }
