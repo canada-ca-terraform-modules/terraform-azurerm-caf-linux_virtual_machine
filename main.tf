@@ -29,7 +29,7 @@ resource azurerm_network_security_group NSG {
       description                = security_rule.value.description
     }
   }
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "azurerm_storage_account" "boot_diagnostic" {
@@ -49,7 +49,7 @@ resource azurerm_public_ip VM-EXT-PubIP {
   resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = var.tags
+  tags                = local.tags
 }
 
 resource azurerm_network_interface NIC {
@@ -60,8 +60,7 @@ resource azurerm_network_interface NIC {
   resource_group_name           = var.resource_group.name
   enable_ip_forwarding          = var.nic_enable_ip_forwarding
   enable_accelerated_networking = var.nic_enable_accelerated_networking
-  #network_security_group_id     = var.use_nic_nsg ? azurerm_network_security_group.NSG[0].id : null
-  dns_servers = var.dnsServers
+  dns_servers                   = var.dnsServers
   dynamic "ip_configuration" {
     for_each = var.nic_ip_configuration.private_ip_address_allocation
     content {
@@ -71,10 +70,29 @@ resource azurerm_network_interface NIC {
       private_ip_address_allocation = var.nic_ip_configuration.private_ip_address_allocation[ip_configuration.key]
       public_ip_address_id          = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[ip_configuration.key].id : ""
       primary                       = ip_configuration.key == 0 ? true : false
-      #load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids[ip_configuration.key]
     }
   }
-  tags = var.tags
+  tags = local.tags
+}
+
+resource azurerm_network_interface_backend_address_pool_association LB {
+  count = var.deploy ? length(var.load_balancer_backend_address_pools_ids) : 0
+
+  network_interface_id    = var.deploy ? azurerm_network_interface.NIC[0].id : null
+  ip_configuration_name   = "ipconfig1"
+  backend_address_pool_id = var.load_balancer_backend_address_pools_ids[count.index]
+}
+
+resource azurerm_network_interface_application_security_group_association asg {
+  count                         = var.asg != null && var.deploy ? 1 : 0
+  network_interface_id          = azurerm_network_interface.NIC[0].id
+  application_security_group_id = var.asg.id
+}
+
+resource azurerm_network_interface_security_group_association nic-nsg {
+  count                     = var.deploy ? 1 : 0
+  network_interface_id      = azurerm_network_interface.NIC[0].id
+  network_security_group_id = azurerm_network_security_group.NSG[0].id
 }
 
 resource azurerm_linux_virtual_machine VM {
@@ -127,7 +145,7 @@ resource azurerm_linux_virtual_machine VM {
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
-  tags = var.tags
+  tags = local.tags
   lifecycle {
     ignore_changes = [
       # Ignore changes to tags, e.g. because a management agent
