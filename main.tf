@@ -77,7 +77,7 @@ resource azurerm_network_interface NIC {
 resource azurerm_network_interface_backend_address_pool_association LB {
   network_interface_id    = azurerm_network_interface.NIC.id
   ip_configuration_name   = "ipconfig1"
-  backend_address_pool_id = var.load_balancer_backend_address_pools_ids[count.index]
+  backend_address_pool_id = var.load_balancer_backend_address_pools_ids
 }
 
 resource azurerm_network_interface_application_security_group_association asg {
@@ -166,7 +166,7 @@ resource azurerm_virtual_machine_data_disk_attachment data_disks {
   count = length(var.data_disk_sizes_gb)
 
   managed_disk_id    = azurerm_managed_disk.data_disks[count.index].id
-  virtual_machine_id = azurerm_linux_virtual_machine.VM[0].id
+  virtual_machine_id = azurerm_linux_virtual_machine.VM.id
   lun                = count.index
   caching            = "ReadWrite"
 }
