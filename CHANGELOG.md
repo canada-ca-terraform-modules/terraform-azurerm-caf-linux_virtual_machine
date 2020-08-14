@@ -1,4 +1,14 @@
 # Changelog
+## v1.1.0 (Aug 2020)
+
+FEATURES:
+
+* Remove support for deploy as it is no lonfer needed under terraform 0.13.x
+
+IMPROVEMENTS:
+
+BUGS:
+
 ## v1.0.2 (June 2020)
 
 FEATURES:
