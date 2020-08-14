@@ -1,5 +1,5 @@
 # Changelog
-## v1.1.0 (Aug 2020)
+## v2.0.0 (Aug 2020)
 
 FEATURES:
 
