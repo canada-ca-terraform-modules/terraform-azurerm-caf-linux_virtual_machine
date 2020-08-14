@@ -82,7 +82,6 @@ module "linuxvm" {
 | boot_diagnostic                         | bool   | no       | Should a boot be turned on or not. Default: false                                                                                                                                                                      |
 | availability_set_id                     | string | no       | Id of the availaiblity set to join. Default is null.                                                                                                                                                                   |
 | priority                                | string | no       | Specifies what should happen when the Virtual Machine is evicted for price reasons when using a Spot instance. At this time the only supported value is Deallocate. Changing this forces a new resource to be created. |
-| deploy                                  | bool   | no       | Should resources in this module be deployed. This is usefull if you want to specify that a module should not be created without changing the terraform code across environments. Default: true                         |
 
 ### tag object
 

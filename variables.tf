@@ -26,11 +26,6 @@ variable "tags" {
   }
 }
 
-variable "deploy" {
-  description = "Should resources in this module be deployed"
-  default     = true
-}
-
 variable "env" {
   description = "4 chars env name"
   type        = string

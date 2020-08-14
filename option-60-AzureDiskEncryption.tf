@@ -17,7 +17,7 @@ resource "random_uuid" "SequenceVersion" {}
 
 resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
 
-  count = var.encryptDisks != null && var.deploy ? 1 : 0
+  count = var.encryptDisks != null ? 1 : 0
   name  = "AzureDiskEncryption"
   depends_on = [
     azurerm_template_deployment.autoshutdown,
@@ -25,7 +25,7 @@ resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
     azurerm_virtual_machine_extension.DAAgentForLinux,
     azurerm_virtual_machine_data_disk_attachment.data_disks
   ]
-  virtual_machine_id         = azurerm_linux_virtual_machine.VM[0].id
+  virtual_machine_id         = azurerm_linux_virtual_machine.VM.id
   publisher                  = "Microsoft.Azure.Security"
   type                       = "AzureDiskEncryptionForLinux"
   type_handler_version       = "1.1"
