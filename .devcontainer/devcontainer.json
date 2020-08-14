@@ -1,5 +1,5 @@
 {
-    "name": "Azure CAF rover",
+    "name": "Azure CAF Linux",
  
     // Update the 'dockerComposeFile' list if you have more compose files or use different names.
     "dockerComposeFile": "docker-compose.yml",
@@ -18,9 +18,9 @@
         "files.eol": "\n",
         "terminal.integrated.shell.linux": "/bin/bash",
         "editor.tabSize": 2,
-        "terminal.integrated.scrollback": 2000,
+        "terminal.integrated.scrollback": 8000,
     },
-
+ 
     // Uncomment the next line if you want start specific services in your Docker Compose config.
     // "runServices": [],
  
