@@ -1,4 +1,14 @@
 # Changelog
+## v1.1.1 (ep 2020)
+
+FEATURES:
+
+* Add lifecycle identity exclusion to prevent vm update when azure change the identity config on vms.
+
+IMPROVEMENTS:
+
+BUGS:
+
 ## v1.1.0 (Aug 2020)
 
 FEATURES:
