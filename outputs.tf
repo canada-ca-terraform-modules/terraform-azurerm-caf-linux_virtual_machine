@@ -1,12 +1,12 @@
 output "name" {
-  value      = azurerm_linux_virtual_machine.VM.name
+  value = azurerm_linux_virtual_machine.VM.name
 }
 
 output "id" {
-  value      = azurerm_linux_virtual_machine.VM.id
+  value = azurerm_linux_virtual_machine.VM.id
 }
 output "vm" {
-  value      = azurerm_linux_virtual_machine.VM
+  value = azurerm_linux_virtual_machine.VM
 }
 
 output "pip" {
@@ -15,5 +15,5 @@ output "pip" {
 }
 
 output "nic" {
-  value      = azurerm_network_interface.NIC
+  value = azurerm_network_interface.NIC
 }

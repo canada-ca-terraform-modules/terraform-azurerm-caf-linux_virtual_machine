@@ -221,6 +221,6 @@ variable "eviction_policy" {
 }
 
 variable "lifecycle" {
-  description = Map of lifecycle objects
+  description = "Map of lifecycle objects"
   default     = {}
 }
