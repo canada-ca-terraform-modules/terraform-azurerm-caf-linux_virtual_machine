@@ -144,13 +144,18 @@ resource azurerm_linux_virtual_machine VM {
   }
   tags = local.tags
   lifecycle {
-    ignore_changes = [
+    ignore_changes = local.ignore_changes
+  }
+}
+
+locals {
+  ignore_changes_default = [
       # Ignore changes to tags, e.g. because a management agent
       # updates these based on some ruleset managed elsewhere.
       admin_username,
       admin_password,
-    ]
-  }
+  ]
+  ignore_changes = concat(lookup(var.lifecycle, "ignore_changes", []), local.ignore_changes_default)
 }
 
 resource azurerm_managed_disk data_disks {

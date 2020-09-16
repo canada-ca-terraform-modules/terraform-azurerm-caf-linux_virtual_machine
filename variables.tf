@@ -219,3 +219,8 @@ variable "eviction_policy" {
   description = "Specifies what should happen when the Virtual Machine is evicted for price reasons when using a Spot instance. At this time the only supported value is Deallocate. Changing this forces a new resource to be created."
   default     = "Deallocate"
 }
+
+variable "lifecycle" {
+  description = Map of lifecycle objects
+  default     = {}
+}
