@@ -149,6 +149,7 @@ resource azurerm_linux_virtual_machine VM {
       # updates these based on some ruleset managed elsewhere.
       admin_username,
       admin_password,
+      identity,
     ]
   }
 }
