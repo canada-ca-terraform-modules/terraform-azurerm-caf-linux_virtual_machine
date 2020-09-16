@@ -220,7 +220,7 @@ variable "eviction_policy" {
   default     = "Deallocate"
 }
 
-variable "lifecycle" {
+variable "vm_lifecycle" {
   description = "Map of lifecycle objects"
   default     = {}
 }

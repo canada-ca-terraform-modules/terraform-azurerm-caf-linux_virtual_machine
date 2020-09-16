@@ -155,7 +155,7 @@ locals {
     admin_username,
     admin_password,
   ]
-  ignore_changes = concat(lookup(var.lifecycle, "ignore_changes", []), local.ignore_changes_default)
+  ignore_changes = concat(lookup(var.vm_lifecycle, "ignore_changes", []), local.ignore_changes_default)
 }
 
 resource azurerm_managed_disk data_disks {
