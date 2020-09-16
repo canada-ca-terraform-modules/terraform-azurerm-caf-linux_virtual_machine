@@ -144,7 +144,7 @@ resource azurerm_linux_virtual_machine VM {
   }
   tags = local.tags
   lifecycle {
-    ignore_changes = local.ignore_changes
+    ignore_changes = local.ignore_changes_default
   }
 }
 
