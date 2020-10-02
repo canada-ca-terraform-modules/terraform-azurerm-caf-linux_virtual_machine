@@ -155,21 +155,23 @@ resource azurerm_linux_virtual_machine VM {
 }
 
 resource azurerm_managed_disk data_disks {
-  count = length(var.data_disk_sizes_gb)
+  #count = length(var.data_disk_sizes_gb)
+  for_each = var.data_disks
 
-  name                 = "${local.vm-name}-datadisk${count.index + 1}"
+  name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
   location             = var.resource_group.location
   resource_group_name  = var.resource_group.name
   storage_account_type = var.data_managed_disk_type
   create_option        = "Empty"
-  disk_size_gb         = var.data_disk_sizes_gb[count.index]
+  disk_size_gb         = each.value.disk_size_gb
 }
 
 resource azurerm_virtual_machine_data_disk_attachment data_disks {
-  count = length(var.data_disk_sizes_gb)
+  #count = length(var.data_disk_sizes_gb)
+  for_each = var.data_disks
 
-  managed_disk_id    = azurerm_managed_disk.data_disks[count.index].id
+  managed_disk_id    = azurerm_managed_disk.data_disks[each.key].id
   virtual_machine_id = azurerm_linux_virtual_machine.VM.id
-  lun                = count.index
+  lun                = each.value.lun
   caching            = "ReadWrite"
 }
