@@ -72,11 +72,11 @@ DEPLOY
 
   # these key-value pairs are passed into the ARM Template's `parameters` block
   parameters = {
-    "computerName"                   = "${azurerm_linux_virtual_machine.VM.name}"
-    "autoShutdownStatus"             = "${var.shutdownConfig.autoShutdownStatus}"
-    "autoShutdownTime"               = "${var.shutdownConfig.autoShutdownTime}"
-    "autoShutdownTimeZone"           = "${var.shutdownConfig.autoShutdownTimeZone}"
-    "autoShutdownNotificationStatus" = "${var.shutdownConfig.autoShutdownNotificationStatus}"
+    "computerName"                   = azurerm_linux_virtual_machine.VM.name
+    "autoShutdownStatus"             = var.shutdownConfig.autoShutdownStatus
+    "autoShutdownTime"               = var.shutdownConfig.autoShutdownTime
+    "autoShutdownTimeZone"           = var.shutdownConfig.autoShutdownTimeZone
+    "autoShutdownNotificationStatus" = var.shutdownConfig.autoShutdownNotificationStatus
   }
 
   deployment_mode = "Incremental"
