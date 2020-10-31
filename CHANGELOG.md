@@ -1,4 +1,14 @@
 # Changelog
+## v1.1.1.3 (ep 2020)
+
+FEATURES:
+
+IMPROVEMENTS:
+
+BUGS:
+
+* Remove legacy variable calls format from autoshutdown extension code.
+
 ## v1.1.1 (ep 2020)
 
 FEATURES:
