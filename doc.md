@@ -24,21 +24,39 @@ Optional (depending on options configured):
 
 ## Usage
 
-```terraform
-module "linuxvm" {
-  source = "github.com/canada-ca-terraform-modules/terraform-azurerm_linux_virtual_machine?ref=20200612.1"
-
-  name                              = "dockerweb"
-  resource_group                    = "some-RG"
-  admin_username                    = "someusername"
-  secretPasswordName                = "somekeyvaultsecretname"
-  nic_subnetName                    = "some-subnet-name"
-  nic_vnetName                      = "some-vnet-name"
-  nic_resource_group_name           = "some-vnet-resourcegroup-name"
-  vm_size                           = "Standard_D2_v3"
-  keyvault = {
-    name                = "some-keyvault-name"
-    resource_group_name = "some-keyvault-resourcegroup-name"
+```hcl
+module "SRV-SASPR1" {
+  count               = var.vmConfigs.SRV-SASPR1.deploy ? 1 : 0
+  source              = "github.com/canada-ca-terraform-modules/terraform-azurerm-caf-linux_virtual_machine?ref=v1.1.5"
+  env                 = var.env
+  serverType          = var.vmConfigs.SRV-SASPR1.serverType
+  userDefinedString   = var.vmConfigs.SRV-SASPR1.userDefinedString
+  postfix             = var.vmConfigs.SRV-SASPR1.postfix
+  resource_group      = local.resource_groups_L2.Project
+  availability_set_id = azurerm_availability_set.SRV-SASPR-as.id
+  subnet              = local.subnets[var.vmConfigs.SRV-SASPR1.subnet]
+  nic_ip_configuration = {
+    private_ip_address            = [cidrhost(local.subnets[var.vmConfigs.SRV-SASPR1.subnet].address_prefix, var.vmConfigs.SRV-SASPR1.IP)]
+    private_ip_address_allocation = ["Static"]
   }
+  storage_image_reference = {
+    publisher = "RedHat",
+    offer     = "RHEL",
+    sku       = "7-LVM",
+    version   = "7.7.2020031212"
+  }
+  encryptDisks = {
+    KeyVaultResourceId = local.Project-kv.id
+    KeyVaultURL        = local.Project-kv.vault_uri
+  }
+  os_managed_disk_type   = lookup(var.vmConfigs.SRV-SASPR1, "os_managed_disk_type", "StandardSSD_LRS")
+  data_managed_disk_type = lookup(var.vmConfigs.SRV-SASPR1, "data_managed_disk_type", "StandardSSD_LRS")
+  data_disks             = lookup(var.vmConfigs.SRV-SASPR1, "data_disks", {})
+  priority               = lookup(var.vmConfigs.SRV-SASPR1, "priority", "Regular")
+  admin_username         = var.vmConfigs.SRV-SASPR1.admin_username
+  admin_password         = var.vmConfigs.SRV-SASPR1.admin_password
+  vm_size                = var.vmConfigs.SRV-SASPR1.vm_size
+  asg                    = azurerm_application_security_group.AD-Clients
+  tags                   = var.tags
 }
 ```

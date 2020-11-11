@@ -11,7 +11,7 @@ shutdownConfig = {
 */
 
 variable "shutdownConfig" {
-  description = "Should the VM shutdown at the time specified."
+  description = "Should the VM shutdown at the time specified. See option-30-autoshutdown.tf file for example"
   type = object({
     autoShutdownStatus             = string
     autoShutdownTime               = string
