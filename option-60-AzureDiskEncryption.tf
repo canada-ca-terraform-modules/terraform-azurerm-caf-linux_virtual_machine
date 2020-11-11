@@ -9,8 +9,12 @@ encryptDisks = {
 */
 
 variable "encryptDisks" {
-  description = "Should the VM disks be encrypted"
-  default     = null
+  description = "Should the VM disks be encrypted. See option-30-AzureDiskEncryption.tf file for example"
+  type = object({
+    KeyVaultResourceId = string
+    KeyVaultURL        = string
+  })
+  default = null
 }
 
 resource "random_uuid" "SequenceVersion" {}

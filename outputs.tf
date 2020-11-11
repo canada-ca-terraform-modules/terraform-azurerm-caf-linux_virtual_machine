@@ -1,19 +1,25 @@
 output "name" {
-  value = azurerm_linux_virtual_machine.VM.name
+  description = "The name of the VM"
+  value       = azurerm_linux_virtual_machine.VM.name
 }
 
 output "id" {
-  value = azurerm_linux_virtual_machine.VM.id
+  description = "The id of the VM"
+  value       = azurerm_linux_virtual_machine.VM.id
 }
+
 output "vm" {
-  value = azurerm_linux_virtual_machine.VM
+  description = "The VM object"
+  value       = azurerm_linux_virtual_machine.VM
 }
 
 output "pip" {
-  depends_on = [azurerm_public_ip.VM-EXT-PubIP[0]]
-  value      = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[0] : null
+  description = "The VM public ip if defined"
+  depends_on  = [azurerm_public_ip.VM-EXT-PubIP[0]]
+  value       = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[0] : null
 }
 
 output "nic" {
-  value = azurerm_network_interface.NIC
+  description = "The VM nic object"
+  value       = azurerm_network_interface.NIC
 }

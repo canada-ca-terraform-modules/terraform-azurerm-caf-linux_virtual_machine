@@ -2,15 +2,19 @@
 Example:
 
 monitoringAgent = {
-  log_analytics_workspace_name                = "somename"
-  log_analytics_workspace_resource_group_name = "someRGName"
+  workspace_id       = "someid"
+  primary_shared_key = "somekey"
 }
 
 */
 
 variable "monitoringAgent" {
-  description = "Should the VM be monitored"
-  default     = null
+  description = "Should the VM be monitored. If yes provide the appropriate object as described. See option-40-OmsAgentForLinux.tf file for example"
+  type = object({
+    workspace_id       = string
+    primary_shared_key = string
+  })
+  default = null
 }
 
 resource "azurerm_virtual_machine_extension" "OmsAgentForLinux" {
