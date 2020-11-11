@@ -9,8 +9,12 @@ monitoringAgent = {
 */
 
 variable "monitoringAgent" {
-  description = "Should the VM be monitored"
-  default     = null
+  description = "Should the VM be monitored. If yes provide the appropriate object as described."
+  type = object({
+    log_analytics_workspace_name                = string
+    log_analytics_workspace_resource_group_name = string
+  })
+  default = null
 }
 
 resource "azurerm_virtual_machine_extension" "OmsAgentForLinux" {

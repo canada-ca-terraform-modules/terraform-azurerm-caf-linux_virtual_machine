@@ -10,7 +10,11 @@ encryptDisks = {
 
 variable "encryptDisks" {
   description = "Should the VM disks be encrypted"
-  default     = null
+  type = object({
+    KeyVaultResourceId = string
+    KeyVaultURL        = string
+  })
+  default = null
 }
 
 resource "random_uuid" "SequenceVersion" {}

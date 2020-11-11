@@ -20,6 +20,7 @@ Those can be set optionally if you want to deploy with optional features
 
 variable "tags" {
   description = "Tags that will be associated to VM resources"
+  type        = map(string)
   default = {
     "exampleTag1" = "SomeValue1"
     "exampleTag1" = "SomeValue2"

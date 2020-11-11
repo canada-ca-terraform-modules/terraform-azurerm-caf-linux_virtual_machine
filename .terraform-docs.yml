@@ -1,0 +1,17 @@
+formatter: markdown
+header-from: doc.md
+
+sections:
+  show-all: true
+
+sort:
+  enabled: true
+  by:
+    - required
+
+settings:
+  color: true
+  escape: true
+  indent: 2
+  required: true
+  sensitive: true

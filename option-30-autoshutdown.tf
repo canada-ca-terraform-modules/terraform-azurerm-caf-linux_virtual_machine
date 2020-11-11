@@ -2,15 +2,22 @@
 Example:
 
 shutdownConfig = {
-  autoShutdownStatus = "Enabled"
-  autoShutdownTime = "17:00"
-  autoShutdownTimeZone = "Eastern Standard Time"
+  autoShutdownStatus             = "Enabled"
+  autoShutdownTime               = "17:00"
+  autoShutdownTimeZone           = "Eastern Standard Time"
   autoShutdownNotificationStatus = "Disabled"
 }
 
 */
 
 variable "shutdownConfig" {
+  description = "Should the VM shutdown at the time specified."
+  type = object({
+    autoShutdownStatus             = string
+    autoShutdownTime               = string
+    autoShutdownTimeZone           = string
+    autoShutdownNotificationStatus = string
+  })
   default = null
 }
 
