@@ -68,6 +68,7 @@ module "SRV-SASPR1" {
 | terraform | >= 0.12 |
 | azurerm | >= 1.32.0 |
 | random | >= 2.2.0 |
+| template | >= 2.2.0 |
 
 ## Providers
 
@@ -83,7 +84,7 @@ module "SRV-SASPR1" {
 | admin\_username | Name of the VM admin account | `string` | n/a | yes |
 | env | 4 chars defining the environment name prefix for the VM. Example: ScSc | `string` | n/a | yes |
 | resource\_group | Resourcegroup object that will contain the VM resources | `any` | n/a | yes |
-| subnet | subnet object to which the VM NIC will connect to | `object({})` | n/a | yes |
+| subnet | subnet object to which the VM NIC will connect to | `any` | n/a | yes |
 | userDefinedString | User defined portion of the server name. Up to 8 chars minus the postfix lenght | `string` | n/a | yes |
 | vm\_size | Specifies the size of the Virtual Machine. Eg: Standard\_F4 | `string` | n/a | yes |
 | admin\_password | Password of the VM admin account | `string` | `null` | no |
@@ -100,7 +101,7 @@ module "SRV-SASPR1" {
 | eviction\_policy | Specifies what should happen when the Virtual Machine is evicted for price reasons when using a Spot instance. At this time the only supported value is Deallocate. Changing this forces a new resource to be created. | `string` | `"Deallocate"` | no |
 | load\_balancer\_backend\_address\_pools\_ids | List of Load Balancer Backend Address Pool IDs references to which this NIC belongs | `list(string)` | `[]` | no |
 | monitoringAgent | Should the VM be monitored. If yes provide the appropriate object as described. See option-40-OmsAgentForLinux.tf file for example | <pre>object({<br>    workspace_id       = string<br>    primary_shared_key = string<br>  })</pre> | `null` | no |
-| nic\_depends\_on | n/a | `any` | `null` | no |
+| nic\_depends\_on | List of resources that the VM NIC depend on | `any` | `null` | no |
 | nic\_enable\_accelerated\_networking | Enables Azure Accelerated Networking using SR-IOV. Only certain VM instance sizes are supported. | `bool` | `false` | no |
 | nic\_enable\_ip\_forwarding | Enables IP Forwarding on the NIC. | `bool` | `false` | no |
 | nic\_ip\_configuration | Defines how a private IP address is assigned. Options are Static or Dynamic. In case of Static also specifiy the desired privat IP address. See variable.tf file for example | <pre>object({<br>    private_ip_address            = list(string)<br>    private_ip_address_allocation = list(string)<br>  })</pre> | <pre>{<br>  "private_ip_address": [<br>    null<br>  ],<br>  "private_ip_address_allocation": [<br>    "Dynamic"<br>  ]<br>}</pre> | no |
@@ -118,7 +119,7 @@ module "SRV-SASPR1" {
 | storage\_os\_disk | This block describe the parameters for the OS disk. Refer to https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine#os_disk for more details. | <pre>object({<br>    caching       = string<br>    create_option = string<br>    disk_size_gb  = number<br>  })</pre> | <pre>{<br>  "caching": "ReadWrite",<br>  "create_option": "FromImage",<br>  "disk_size_gb": null<br>}</pre> | no |
 | tags | Tags that will be associated to VM resources | `map(string)` | <pre>{<br>  "exampleTag1": "SomeValue2"<br>}</pre> | no |
 | use\_nic\_nsg | Should a NIC NSG be used | `bool` | `true` | no |
-| vm\_depends\_on | n/a | `any` | `null` | no |
+| vm\_depends\_on | List of resources that the VM depend on | `any` | `null` | no |
 
 ## Outputs
 
