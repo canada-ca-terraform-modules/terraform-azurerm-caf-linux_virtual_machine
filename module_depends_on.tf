@@ -10,11 +10,13 @@
 */
 
 variable "vm_depends_on" {
-  type    = any
-  default = null
+  description = "List of resources that the VM depend on"
+  type        = any
+  default     = null
 }
 
 variable "nic_depends_on" {
-  type    = any
-  default = null
+  description = "List of resources that the VM NIC depend on"
+  type        = any
+  default     = null
 }

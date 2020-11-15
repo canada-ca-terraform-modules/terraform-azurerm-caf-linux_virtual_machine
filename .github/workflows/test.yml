@@ -1,0 +1,54 @@
+name: test module
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+env:
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+jobs:
+  module_test_deploy:
+    name: module_test_deploy
+    runs-on: ubuntu-latest
+    container:
+      image: sscspccloudnuage/rover:2011.0210
+      options: --user 0
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup context
+        id: context
+        run: |
+          ln -s ${GITHUB_WORKSPACE} /tf/caf
+        #  echo ${{github.ref}}
+
+      - name: Login to azure
+        run: |
+          az login --service-principal -u '${{ env.ARM_CLIENT_ID }}' -p '${{ env.ARM_CLIENT_SECRET }}' --tenant '${{ env.ARM_TENANT_ID }}'
+        #  az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
+
+      - name: Terraform version
+        run: |
+          terraform version
+
+      - name: Deploy module test
+        run: |
+          cd /tf/caf/test
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Destroy module test
+        if: ${{ always() }}
+        run: |
+          cd /tf/caf/test
+          terraform destroy -auto-approve
