@@ -81,13 +81,6 @@ resource azurerm_network_interface NIC {
     }
   }
   tags = local.tags
-  lifecycle {
-    ignore_changes = [
-      # Ignore changes to tags, e.g. because a management agent
-      # updates these based on some ruleset managed elsewhere.
-      private_ip_addresses,
-    ]
-  }
 }
 
 resource azurerm_network_interface_backend_address_pool_association LB {
@@ -168,6 +161,7 @@ resource azurerm_linux_virtual_machine VM {
       admin_password,
       identity,
       os_disk, # Prevent restored OS disks from causinf terraform to attempt to re-create the original os disk name and break the restores OS
+      private_ip_addresses[0],
     ]
   }
 }
