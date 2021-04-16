@@ -117,6 +117,7 @@ resource azurerm_linux_virtual_machine VM {
   eviction_policy                 = local.eviction_policy
   network_interface_ids           = [azurerm_network_interface.NIC.id]
   availability_set_id             = var.availability_set_id
+  encryption_at_host_enabled      = var.encryption_at_host_enabled
   dynamic "admin_ssh_key" {
     for_each = local.ssh_key
     content {

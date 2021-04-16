@@ -68,6 +68,10 @@ variable "dnsServers" {
   */
 }
 
+variable "encryption_at_host_enabled" {
+  default = false
+}
+
 variable "nic_enable_ip_forwarding" {
   description = "Enables IP Forwarding on the NIC."
   type        = bool
