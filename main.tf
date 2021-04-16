@@ -152,7 +152,7 @@ resource azurerm_linux_virtual_machine VM {
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
-  zoneaas
+  zone = ""
   tags = local.tags
   lifecycle {
     ignore_changes = [
