@@ -152,7 +152,6 @@ resource azurerm_linux_virtual_machine VM {
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
-  zone = ""
   tags = local.tags
   lifecycle {
     ignore_changes = [
@@ -162,6 +161,8 @@ resource azurerm_linux_virtual_machine VM {
       admin_password,
       identity,
       zone,
+      public_ip_address,
+      private_ip_addresses,
       os_disk, # Prevent restored OS disks from causinf terraform to attempt to re-create the original os disk name and break the restores OS
     ]
   }
