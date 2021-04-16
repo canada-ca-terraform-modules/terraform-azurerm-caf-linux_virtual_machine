@@ -160,9 +160,6 @@ resource azurerm_linux_virtual_machine VM {
       admin_username,
       admin_password,
       identity,
-      zone,
-      public_ip_address,
-      private_ip_addresses,
       os_disk, # Prevent restored OS disks from causinf terraform to attempt to re-create the original os disk name and break the restores OS
     ]
   }
