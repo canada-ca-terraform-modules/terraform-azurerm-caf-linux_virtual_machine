@@ -31,10 +31,7 @@ variable "postfix" {
 
 variable "data_disks" {
   description = "Map of object of disk sizes in gigabytes and lun number for each desired data disks. See variable.tf file for example"
-  type = map(object({
-    disk_size_gb = number
-    lun          = number
-  }))
+  type = any
   default = {}
   /*
     Example: 
@@ -256,6 +253,18 @@ variable "boot_diagnostic" {
   description = "Should a boot be turned on or not"
   type        = bool
   default     = false
+}
+
+variable "ultra_ssd_enabled" {
+  description = "Should the capacity to enable Data Disks of the UltraSSD_LRS storage account type be supported on this Virtual Machine?"
+  type        = bool
+  default     = false
+}
+
+variable "zone" {
+  description = "The Zone in which this Virtual Machine should be created. Changing this forces a new resource to be created."
+  type        = any
+  default     = null
 }
 
 variable "availability_set_id" {

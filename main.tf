@@ -147,6 +147,13 @@ resource azurerm_linux_virtual_machine VM {
     storage_account_type = var.os_managed_disk_type
     disk_size_gb         = var.storage_os_disk.disk_size_gb
   }
+  zone = var.zone
+  dynamic "additional_capabilities" {
+    for_each = var.ultra_ssd_enabled ? ["1"] : []
+    content {
+      ultra_ssd_enabled = true
+    }
+  }
   dynamic "boot_diagnostics" {
     for_each = local.boot_diagnostic
     content {
@@ -167,7 +174,6 @@ resource azurerm_linux_virtual_machine VM {
 }
 
 resource azurerm_managed_disk data_disks {
-  #count = length(var.data_disk_sizes_gb)
   for_each = var.data_disks
 
   name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
@@ -176,6 +182,9 @@ resource azurerm_managed_disk data_disks {
   storage_account_type = lookup(each.value, "storage_account_type", var.data_managed_disk_type)
   create_option        = lookup(each.value, "create_option", "Empty")
   disk_size_gb         = each.value.disk_size_gb
+  disk_iops_read_write = lookup(each.value, "disk_iops_read_write", null)
+  disk_mbps_read_write = lookup(each.value, "disk_mbps_read_write", null)
+  zones                = lookup(each.value, "zones", null)
   lifecycle {
     ignore_changes = [
       name,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
@@ -193,7 +202,7 @@ resource azurerm_virtual_machine_data_disk_attachment data_disks {
   managed_disk_id    = azurerm_managed_disk.data_disks[each.key].id
   virtual_machine_id = azurerm_linux_virtual_machine.VM.id
   lun                = each.value.lun
-  caching            = "ReadWrite"
+  caching            = lookup(each.value, "caching", "ReadWrite")
   lifecycle {
     ignore_changes = [
       managed_disk_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
