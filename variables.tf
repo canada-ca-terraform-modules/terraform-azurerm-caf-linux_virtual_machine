@@ -31,10 +31,7 @@ variable "postfix" {
 
 variable "data_disks" {
   description = "Map of object of disk sizes in gigabytes and lun number for each desired data disks. See variable.tf file for example"
-  type = map(object({
-    disk_size_gb = number
-    lun          = number
-  }))
+  type = any
   default = {}
   /*
     Example: 
