@@ -261,6 +261,12 @@ variable "ultra_ssd_enabled" {
   default     = false
 }
 
+variable "zones" {
+  description = "The Zone in which this Virtual Machine should be created. Changing this forces a new resource to be created."
+  type        = any
+  default     = null
+}
+
 variable "availability_set_id" {
   description = "Sets the id for the availability set to use for the VM"
   type        = string
