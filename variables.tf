@@ -261,7 +261,7 @@ variable "ultra_ssd_enabled" {
   default     = false
 }
 
-variable "zones" {
+variable "zone" {
   description = "The Zone in which this Virtual Machine should be created. Changing this forces a new resource to be created."
   type        = any
   default     = null
