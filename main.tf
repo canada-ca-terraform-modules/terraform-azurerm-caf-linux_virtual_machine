@@ -173,7 +173,7 @@ resource azurerm_managed_disk data_disks {
   name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
   location             = var.resource_group.location
   resource_group_name  = var.resource_group.name
-  storage_account_type = try(each.value.storage_account_type, var.data_managed_disk_type)
+  storage_account_type = each.value.storage_account_type
   # storage_account_type = lookup(each.value, "storage_account_type", var.data_managed_disk_type)
   create_option        = lookup(each.value, "create_option", "Empty")
   disk_size_gb         = each.value.disk_size_gb
