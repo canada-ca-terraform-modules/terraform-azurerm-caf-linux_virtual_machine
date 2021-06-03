@@ -176,6 +176,8 @@ resource azurerm_managed_disk data_disks {
   storage_account_type = lookup(each.value, "storage_account_type", var.data_managed_disk_type)
   create_option        = lookup(each.value, "create_option", "Empty")
   disk_size_gb         = each.value.disk_size_gb
+  disk_iops_read_write = lookup(each.value, "disk_iops_read_write", null)
+  disk_mbps_read_write = lookup(each.value, "disk_mbps_read_write", null)
   lifecycle {
     ignore_changes = [
       name,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
