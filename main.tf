@@ -184,7 +184,7 @@ resource azurerm_managed_disk data_disks {
   disk_size_gb         = each.value.disk_size_gb
   disk_iops_read_write = lookup(each.value, "disk_iops_read_write", null)
   disk_mbps_read_write = lookup(each.value, "disk_mbps_read_write", null)
-  zones = ["1"]
+  zones                = lookup(each.value, "zones", null)
   lifecycle {
     ignore_changes = [
       name,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
@@ -202,7 +202,7 @@ resource azurerm_virtual_machine_data_disk_attachment data_disks {
   managed_disk_id    = azurerm_managed_disk.data_disks[each.key].id
   virtual_machine_id = azurerm_linux_virtual_machine.VM.id
   lun                = each.value.lun
-  caching            = "ReadWrite"
+  caching            = lookup(each.value, "caching", "ReadWrite")
   lifecycle {
     ignore_changes = [
       managed_disk_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
