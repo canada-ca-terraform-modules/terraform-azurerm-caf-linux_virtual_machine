@@ -147,6 +147,12 @@ resource azurerm_linux_virtual_machine VM {
     storage_account_type = var.os_managed_disk_type
     disk_size_gb         = var.storage_os_disk.disk_size_gb
   }
+  dynamic "additional_capabilities" {
+    for_each = var.ultra_ssd_enabled ? ["1"] : []
+    content {
+      ultra_ssd_enabled = true
+    }
+  }
   dynamic "boot_diagnostics" {
     for_each = local.boot_diagnostic
     content {

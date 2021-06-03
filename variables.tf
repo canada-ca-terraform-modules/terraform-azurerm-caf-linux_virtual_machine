@@ -255,6 +255,12 @@ variable "boot_diagnostic" {
   default     = false
 }
 
+variable "ultra_ssd_enabled" {
+  description = "Should the capacity to enable Data Disks of the UltraSSD_LRS storage account type be supported on this Virtual Machine?"
+  type        = bool
+  default     = false
+}
+
 variable "availability_set_id" {
   description = "Sets the id for the availability set to use for the VM"
   type        = string
