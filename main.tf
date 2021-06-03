@@ -118,6 +118,7 @@ resource azurerm_linux_virtual_machine VM {
   network_interface_ids           = [azurerm_network_interface.NIC.id]
   availability_set_id             = var.availability_set_id
   encryption_at_host_enabled      = var.encryption_at_host_enabled
+  license_type                    = var.license_type
   dynamic "admin_ssh_key" {
     for_each = local.ssh_key
     content {
@@ -172,8 +173,8 @@ resource azurerm_managed_disk data_disks {
   name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
   location             = var.resource_group.location
   resource_group_name  = var.resource_group.name
-  storage_account_type = var.data_managed_disk_type
-  create_option        = "Empty"
+  storage_account_type = lookup(each.value, "storage_account_type", var.data_managed_disk_type)
+  create_option        = lookup(each.value, "create_option", "Empty")
   disk_size_gb         = each.value.disk_size_gb
   lifecycle {
     ignore_changes = [

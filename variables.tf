@@ -281,3 +281,9 @@ variable "eviction_policy" {
   type        = string
   default     = "Deallocate"
 }
+
+variable "license_type" {
+  description = " (Optional) Specifies the BYOL Type for this Virtual Machine. Possible values are RHEL_BYOS and SLES_BYOS."
+  type        = string
+  default     = null
+}
