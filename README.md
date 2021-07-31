@@ -67,15 +67,12 @@ module "SRV-SASPR1" {
 |------|---------|
 | terraform | >= 0.12 |
 | azurerm | >= 1.32.0 |
-| random | >= 2.2.0 |
-| template | >= 2.2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | azurerm | >= 1.32.0 |
-| random | >= 2.2.0 |
 
 ## Inputs
 
