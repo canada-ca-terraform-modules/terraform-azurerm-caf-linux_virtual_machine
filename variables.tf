@@ -31,8 +31,8 @@ variable "postfix" {
 
 variable "data_disks" {
   description = "Map of object of disk sizes in gigabytes and lun number for each desired data disks. See variable.tf file for example"
-  type = any
-  default = {}
+  type        = any
+  default     = {}
   /*
     Example: 
 
@@ -294,5 +294,24 @@ variable "eviction_policy" {
 variable "license_type" {
   description = " (Optional) Specifies the BYOL Type for this Virtual Machine. Possible values are RHEL_BYOS and SLES_BYOS."
   type        = string
+  default     = null
+}
+
+# Backup related vars
+variable "backup" {
+  description = "Specifies the id of the backup policy to use."
+  type        = bool
+  default     = false
+}
+
+variable "backup_policy_id" {
+  description = "Specifies the id of the backup policy to use."
+  type        = string
+  default     = null
+}
+
+variable "recovery_vault" {
+  description = "The Recovery Services Vault object to use. Changing this forces a new resource to be created."
+  type        = any
   default     = null
 }

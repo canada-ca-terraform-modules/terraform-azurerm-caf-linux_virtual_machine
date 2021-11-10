@@ -6,8 +6,7 @@ sections:
 
 sort:
   enabled: true
-  by:
-    - required
+  by: name
 
 settings:
   color: true

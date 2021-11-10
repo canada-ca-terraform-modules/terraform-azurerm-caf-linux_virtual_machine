@@ -5,7 +5,7 @@ terraform {
   }
 }
 
-resource azurerm_network_security_group NSG {
+resource "azurerm_network_security_group" "NSG" {
   count               = var.use_nic_nsg ? 1 : 0
   name                = "${local.vm-name}-nsg"
   location            = var.resource_group.location
@@ -49,7 +49,7 @@ resource "azurerm_storage_account" "boot_diagnostic" {
 }
 
 # If public_ip is true then create resource. If not then do not create any
-resource azurerm_public_ip VM-EXT-PubIP {
+resource "azurerm_public_ip" "VM-EXT-PubIP" {
   count               = var.public_ip ? length(var.nic_ip_configuration.private_ip_address_allocation) : 0
   name                = "${local.vm-name}-pip${count.index + 1}"
   location            = var.resource_group.location
@@ -59,7 +59,7 @@ resource azurerm_public_ip VM-EXT-PubIP {
   tags                = local.tags
 }
 
-resource azurerm_network_interface NIC {
+resource "azurerm_network_interface" "NIC" {
   name                          = "${local.vm-name}-nic1"
   depends_on                    = [var.nic_depends_on]
   location                      = var.resource_group.location
@@ -81,7 +81,7 @@ resource azurerm_network_interface NIC {
   tags = local.tags
 }
 
-resource azurerm_network_interface_backend_address_pool_association LB {
+resource "azurerm_network_interface_backend_address_pool_association" "LB" {
   for_each = toset(var.load_balancer_backend_address_pools_ids)
 
   network_interface_id    = azurerm_network_interface.NIC.id
@@ -89,18 +89,18 @@ resource azurerm_network_interface_backend_address_pool_association LB {
   backend_address_pool_id = each.key
 }
 
-resource azurerm_network_interface_application_security_group_association asg {
+resource "azurerm_network_interface_application_security_group_association" "asg" {
   count                         = var.asg != null ? 1 : 0
   network_interface_id          = azurerm_network_interface.NIC.id
   application_security_group_id = var.asg.id
 }
 
-resource azurerm_network_interface_security_group_association nic-nsg {
+resource "azurerm_network_interface_security_group_association" "nic-nsg" {
   network_interface_id      = azurerm_network_interface.NIC.id
   network_security_group_id = azurerm_network_security_group.NSG[0].id
 }
 
-resource azurerm_linux_virtual_machine VM {
+resource "azurerm_linux_virtual_machine" "VM" {
   name                            = local.vm-name
   depends_on                      = [var.vm_depends_on]
   location                        = var.resource_group.location
@@ -171,7 +171,7 @@ resource azurerm_linux_virtual_machine VM {
   }
 }
 
-resource azurerm_managed_disk data_disks {
+resource "azurerm_managed_disk" "data_disks" {
   for_each = var.data_disks
 
   name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
@@ -193,7 +193,7 @@ resource azurerm_managed_disk data_disks {
   }
 }
 
-resource azurerm_virtual_machine_data_disk_attachment data_disks {
+resource "azurerm_virtual_machine_data_disk_attachment" "data_disks" {
   #count = length(var.data_disk_sizes_gb)
   for_each = var.data_disks
 
@@ -204,6 +204,20 @@ resource azurerm_virtual_machine_data_disk_attachment data_disks {
   lifecycle {
     ignore_changes = [
       managed_disk_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
+    ]
+  }
+}
+
+resource "azurerm_backup_protected_vm" "backup_vm" {
+  count               = var.backup ? 1 : 0
+  resource_group_name = var.recovery_vault.resource_group_name
+  recovery_vault_name = var.recovery_vault.name
+  source_vm_id        = azurerm_linux_virtual_machine.VM.id
+  backup_policy_id    = var.backup_policy_id
+  lifecycle {
+    # Required otherwise it want to replace the resource
+    ignore_changes = [
+      source_vm_id,
     ]
   }
 }
