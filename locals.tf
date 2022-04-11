@@ -6,6 +6,7 @@ locals {
   }
   tags            = merge(var.tags, local.module_tag)
   plan            = var.plan == null ? [] : [var.plan]
+  storage_image_reference = var.storage_image_reference == null ? [] : [var.storage_image_reference]
   ssh_key         = var.ssh_key == null ? [] : [var.ssh_key]
   boot_diagnostic = var.boot_diagnostic ? ["1"] : []
   unique          = substr(sha1(var.resource_group.id), 0, 8)
