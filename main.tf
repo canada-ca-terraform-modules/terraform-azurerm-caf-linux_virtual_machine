@@ -126,7 +126,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
   source_image_id = var.source_image_id
   dynamic "source_image_reference" {
-    for_each = source_image_id == null ? ["1"] : []
+    for_each = var.source_image_id == null ? ["1"] : [] # If there is a source image id provided then don't use source_image_reference
     content {
       publisher = var.storage_image_reference.publisher
       offer     = var.storage_image_reference.offer
