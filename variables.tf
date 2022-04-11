@@ -211,13 +211,12 @@ variable "storage_image_reference" {
     sku       = string
     version   = string
   })
-  default = null
-  # default = {
-  #   publisher = "RedHat",
-  #   offer     = "RHEL",
-  #   sku       = "7.4",
-  #   version   = "latest"
-  # }
+  default = {
+    publisher = "RedHat",
+    offer     = "RHEL",
+    sku       = "7.4",
+    version   = "latest"
+  }
 }
 
 variable "source_image_id" {

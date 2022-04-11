@@ -126,12 +126,12 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
   source_image_id = var.source_image_id
   dynamic "source_image_reference" {
-    for_each = local.storage_image_reference
+    for_each = source_image_id == null ? ["1"] : []
     content {
-      publisher = local.storage_image_reference.publisher
-      offer     = local.storage_image_reference.offer
-      sku       = local.storage_image_reference.sku
-      version   = local.storage_image_reference.version
+      publisher = var.storage_image_reference.publisher
+      offer     = var.storage_image_reference.offer
+      sku       = var.storage_image_reference.sku
+      version   = var.storage_image_reference.version
     }
   }
   dynamic "plan" {
