@@ -126,7 +126,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
   source_image_id = var.source_image_id
   dynamic "source_image_reference" {
-    for_each = local.source_image_reference
+    for_each = local.storage_image_reference
     content {
       publisher = local.storage_image_reference.publisher
       offer     = local.storage_image_reference.offer
