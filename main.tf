@@ -124,11 +124,15 @@ resource "azurerm_linux_virtual_machine" "VM" {
       username   = var.admin_username
     }
   }
-  source_image_reference {
-    publisher = var.storage_image_reference.publisher
-    offer     = var.storage_image_reference.offer
-    sku       = var.storage_image_reference.sku
-    version   = var.storage_image_reference.version
+  source_image_id = var.source_image_id
+  dynamic "source_image_reference" {
+    for_each = var.source_image_id == null ? ["1"] : [] # If there is a source image id provided then don't use source_image_reference
+    content {
+      publisher = var.storage_image_reference.publisher
+      offer     = var.storage_image_reference.offer
+      sku       = var.storage_image_reference.sku
+      version   = var.storage_image_reference.version
+    }
   }
   dynamic "plan" {
     for_each = local.plan
