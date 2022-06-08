@@ -188,7 +188,7 @@ resource "azurerm_managed_disk" "data_disks" {
   disk_size_gb         = each.value.disk_size_gb
   disk_iops_read_write = lookup(each.value, "disk_iops_read_write", null)
   disk_mbps_read_write = lookup(each.value, "disk_mbps_read_write", null)
-  zones                = lookup(each.value, "zones", null)
+  zone                 = lookup(each.value, "zone", null)
   lifecycle {
     ignore_changes = [
       name,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
