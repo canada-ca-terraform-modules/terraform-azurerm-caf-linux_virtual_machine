@@ -21,12 +21,12 @@ variable "shutdownConfig" {
   default = null
 }
 
-resource "azurerm_template_deployment" "autoshutdown" {
+resource "azurerm_resource_group_template_deployment" "autoshutdown" {
   count               = var.shutdownConfig != null ? 1 : 0
   name                = "autoshutdown"
   resource_group_name = var.resource_group.name
   depends_on          = [azurerm_linux_virtual_machine.VM]
-  template_body       = <<DEPLOY
+  template_content    = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -78,13 +78,13 @@ resource "azurerm_template_deployment" "autoshutdown" {
 DEPLOY
 
   # these key-value pairs are passed into the ARM Template's `parameters` block
-  parameters = {
-    "computerName"                   = azurerm_linux_virtual_machine.VM.name
-    "autoShutdownStatus"             = var.shutdownConfig.autoShutdownStatus
-    "autoShutdownTime"               = var.shutdownConfig.autoShutdownTime
-    "autoShutdownTimeZone"           = var.shutdownConfig.autoShutdownTimeZone
-    "autoShutdownNotificationStatus" = var.shutdownConfig.autoShutdownNotificationStatus
-  }
+  parameters_content = jsonencode({
+    computerName                   = azurerm_linux_virtual_machine.VM.name
+    autoShutdownStatus             = var.shutdownConfig.autoShutdownStatus
+    autoShutdownTime               = var.shutdownConfig.autoShutdownTime
+    autoShutdownTimeZone           = var.shutdownConfig.autoShutdownTimeZone
+    autoShutdownNotificationStatus = var.shutdownConfig.autoShutdownNotificationStatus
+  })
 
   deployment_mode = "Incremental"
 }

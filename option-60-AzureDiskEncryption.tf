@@ -24,7 +24,7 @@ resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
   count = var.encryptDisks != null ? 1 : 0
   name  = "AzureDiskEncryption"
   depends_on = [
-    azurerm_template_deployment.autoshutdown,
+    azurerm_resource_group_template_deployment.autoshutdown,
     azurerm_virtual_machine_extension.OmsAgentForLinux,
     azurerm_virtual_machine_extension.DAAgentForLinux,
     azurerm_virtual_machine_data_disk_attachment.data_disks

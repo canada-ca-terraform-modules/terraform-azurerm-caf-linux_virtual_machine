@@ -15,7 +15,7 @@ resource "azurerm_virtual_machine_extension" "DAAgentForLinux" {
   type_handler_version       = "9.10"
   auto_upgrade_minor_version = true
   depends_on = [
-    azurerm_template_deployment.autoshutdown,
+    azurerm_resource_group_template_deployment.autoshutdown,
     azurerm_virtual_machine_extension.OmsAgentForLinux
   ]
 }
