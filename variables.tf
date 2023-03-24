@@ -321,3 +321,15 @@ variable "recovery_vault" {
   type        = any
   default     = null
 }
+
+variable "patch_mode" {
+  description = "(Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault"
+  type        = string
+  default     = null
+}
+
+variable "patch_assessment_mode" {
+  description = "(Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault."
+  type        = string
+  default     = null
+}

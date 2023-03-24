@@ -117,6 +117,8 @@ resource "azurerm_linux_virtual_machine" "VM" {
   availability_set_id             = var.availability_set_id
   encryption_at_host_enabled      = var.encryption_at_host_enabled
   license_type                    = var.license_type
+  patch_mode                      = var.patch_mode
+  patch_assessment_mode           = var.patch_assessment_mode
   dynamic "admin_ssh_key" {
     for_each = local.ssh_key
     content {
