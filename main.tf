@@ -74,7 +74,7 @@ resource "azurerm_network_interface" "NIC" {
       subnet_id                     = var.subnet.id
       private_ip_address            = var.nic_ip_configuration.private_ip_address[ip_configuration.key]
       private_ip_address_allocation = var.nic_ip_configuration.private_ip_address_allocation[ip_configuration.key]
-      public_ip_address_id          = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[ip_configuration.key].id : ""
+      public_ip_address_id          = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[ip_configuration.key].id : null
       primary                       = ip_configuration.key == 0 ? true : false
     }
   }
