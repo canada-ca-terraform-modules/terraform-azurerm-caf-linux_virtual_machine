@@ -204,6 +204,8 @@ resource "azurerm_managed_disk" "data_disks" {
       create_option,      # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
       source_resource_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
       tags,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
+      zone,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
+      
     ]
   }
 }
@@ -219,6 +221,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disks" {
   lifecycle {
     ignore_changes = [
       managed_disk_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
+      virtual_machine_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
     ]
   }
 }
