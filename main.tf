@@ -114,7 +114,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
-  computer_name                   = local.vm-name
+  computer_name                   = var.computer_name
   custom_data                     = var.custom_data
   size                            = var.vm_size
   priority                        = var.priority
@@ -170,7 +170,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
-  tags = local.tags
+  tags = merge(local.tags,[var.computer_name != null ? {"OsHostname" = var.computer_name}: null]...)
   lifecycle {
     ignore_changes = [
       # Ignore changes to tags, e.g. because a management agent
