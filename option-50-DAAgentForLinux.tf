@@ -18,4 +18,6 @@ resource "azurerm_virtual_machine_extension" "DAAgentForLinux" {
     azurerm_resource_group_template_deployment.autoshutdown,
     azurerm_virtual_machine_extension.OmsAgentForLinux
   ]
+
+  tags = var.tags
 }
