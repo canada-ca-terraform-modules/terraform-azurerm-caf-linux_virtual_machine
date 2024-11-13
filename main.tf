@@ -64,8 +64,8 @@ resource "azurerm_network_interface" "NIC" {
   depends_on                    = [var.nic_depends_on]
   location                      = var.resource_group.location
   resource_group_name           = var.resource_group.name
-  enable_ip_forwarding          = var.nic_enable_ip_forwarding
-  enable_accelerated_networking = var.nic_enable_accelerated_networking
+  ip_forwarding_enabled          = var.ip_forwarding_enabled
+  accelerated_networking_enabled = var.accelerated_networking_enabled
   dns_servers                   = var.dnsServers
   dynamic "ip_configuration" {
     for_each = var.nic_ip_configuration.private_ip_address_allocation
