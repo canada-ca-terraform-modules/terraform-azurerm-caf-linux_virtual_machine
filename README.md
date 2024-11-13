@@ -23,6 +23,30 @@ Optional (depending on options configured):
 * log analytics workspace
 
 <!-- BEGIN_TF_DOCS -->
+# Terraform Basic Linux Virtual Machine
+
+## Introduction
+
+This module deploys a simple [virtual machine resource](https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2019-03-01/virtualmachines) with an NSG, 1 NIC and a simple OS Disk.
+
+## Security Controls
+
+The following security controls can be met through configuration of this template:
+
+* AC-1, AC-10, AC-11, AC-11(1), AC-12, AC-14, AC-16, AC-17, AC-18, AC-18(4), AC-2 , AC-2(5), AC-20(1) , AC-20(3), AC-20(4), AC-24(1), AC-24(11), AC-3, AC-3 , AC-3(1), AC-3(3), AC-3(9), AC-4, AC-4(14), AC-6, AC-6, AC-6(1), AC-6(10), AC-6(11), AC-7, AC-8, AC-8, AC-9, AC-9(1), AI-16, AU-2, AU-3, AU-3(1), AU-3(2), AU-4, AU-5, AU-5(3), AU-8(1), AU-9, CM-10, CM-11(2), CM-2(2), CM-2(4), CM-3, CM-3(1), CM-3(6), CM-5(1), CM-6, CM-6, CM-7, CM-7, IA-1, IA-2, IA-3, IA-4(1), IA-4(4), IA-5, IA-5, IA-5(1), IA-5(13), IA-5(1c), IA-5(6), IA-5(7), IA-9, SC-10, SC-13, SC-15, SC-18(4), SC-2, SC-2, SC-23, SC-28, SC-30(5), SC-5, SC-7, SC-7(10), SC-7(16), SC-7(8), SC-8, SC-8(1), SC-8(4), SI-14, SI-2(1), SI-3
+
+## Dependancies
+
+Hard:
+
+* Resource Groups
+* Keyvault
+* VNET-Subnet
+
+Optional (depending on options configured):
+
+* log analytics workspace
+
 ## Usage
 
 ```hcl
@@ -105,6 +129,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_accelerated_networking_enabled"></a> [accelerated\_networking\_enabled](#input\_accelerated\_networking\_enabled) | Enables Azure Accelerated Networking using SR-IOV. Only certain VM instance sizes are supported. | `bool` | `false` | no |
 | <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | Password of the VM admin account | `string` | `null` | no |
 | <a name="input_admin_username"></a> [admin\_username](#input\_admin\_username) | Name of the VM admin account | `string` | n/a | yes |
 | <a name="input_asg"></a> [asg](#input\_asg) | ASG object to join the NIC to | `any` | `null` | no |
@@ -112,6 +137,7 @@ No modules.
 | <a name="input_backup"></a> [backup](#input\_backup) | Specifies the id of the backup policy to use. | `bool` | `false` | no |
 | <a name="input_backup_policy_id"></a> [backup\_policy\_id](#input\_backup\_policy\_id) | Specifies the id of the backup policy to use. | `string` | `null` | no |
 | <a name="input_boot_diagnostic"></a> [boot\_diagnostic](#input\_boot\_diagnostic) | Should a boot be turned on or not | `bool` | `false` | no |
+| <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | (Optional) VM OS Hostname | `string` | `null` | no |
 | <a name="input_custom_data"></a> [custom\_data](#input\_custom\_data) | Specifies custom data to supply to the machine. On Linux-based systems, this can be used as a cloud-init script. On other systems, this will be copied as a file on disk. Internally, Terraform will base64 encode this value before sending it to the API. The maximum length of the binary array is 65535 bytes. | `string` | `null` | no |
 | <a name="input_data_disks"></a> [data\_disks](#input\_data\_disks) | Map of object of disk sizes in gigabytes and lun number for each desired data disks. See variable.tf file for example | `any` | `{}` | no |
 | <a name="input_data_managed_disk_type"></a> [data\_managed\_disk\_type](#input\_data\_managed\_disk\_type) | Specifies the type of Data Managed Disk which should be created. Possible values are Standard\_LRS or Premium\_LRS. | `string` | `"Standard_LRS"` | no |
@@ -122,14 +148,15 @@ No modules.
 | <a name="input_encryption_at_host_enabled"></a> [encryption\_at\_host\_enabled](#input\_encryption\_at\_host\_enabled) | n/a | `bool` | `false` | no |
 | <a name="input_env"></a> [env](#input\_env) | 4 chars defining the environment name prefix for the VM. Example: ScSc | `string` | n/a | yes |
 | <a name="input_eviction_policy"></a> [eviction\_policy](#input\_eviction\_policy) | Specifies what should happen when the Virtual Machine is evicted for price reasons when using a Spot instance. At this time the only supported value is Deallocate. Changing this forces a new resource to be created. | `string` | `"Deallocate"` | no |
+| <a name="input_ip_forwarding_enabled"></a> [ip\_forwarding\_enabled](#input\_ip\_forwarding\_enabled) | Enables IP Forwarding on the NIC. | `bool` | `false` | no |
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | (Optional) Specifies the BYOL Type for this Virtual Machine. Possible values are RHEL\_BYOS and SLES\_BYOS. | `string` | `null` | no |
 | <a name="input_load_balancer_backend_address_pools_ids"></a> [load\_balancer\_backend\_address\_pools\_ids](#input\_load\_balancer\_backend\_address\_pools\_ids) | List of Load Balancer Backend Address Pool IDs references to which this NIC belongs | `list(string)` | `[]` | no |
 | <a name="input_monitoringAgent"></a> [monitoringAgent](#input\_monitoringAgent) | Should the VM be monitored. If yes provide the appropriate object as described. See option-40-OmsAgentForLinux.tf file for example | <pre>object({<br>    workspace_id       = string<br>    primary_shared_key = string<br>  })</pre> | `null` | no |
 | <a name="input_nic_depends_on"></a> [nic\_depends\_on](#input\_nic\_depends\_on) | List of resources that the VM NIC depend on | `any` | `null` | no |
-| <a name="input_nic_enable_accelerated_networking"></a> [nic\_enable\_accelerated\_networking](#input\_nic\_enable\_accelerated\_networking) | Enables Azure Accelerated Networking using SR-IOV. Only certain VM instance sizes are supported. | `bool` | `false` | no |
-| <a name="input_nic_enable_ip_forwarding"></a> [nic\_enable\_ip\_forwarding](#input\_nic\_enable\_ip\_forwarding) | Enables IP Forwarding on the NIC. | `bool` | `false` | no |
 | <a name="input_nic_ip_configuration"></a> [nic\_ip\_configuration](#input\_nic\_ip\_configuration) | Defines how a private IP address is assigned. Options are Static or Dynamic. In case of Static also specifiy the desired privat IP address. See variable.tf file for example | <pre>object({<br>    private_ip_address            = list(string)<br>    private_ip_address_allocation = list(string)<br>  })</pre> | <pre>{<br>  "private_ip_address": [<br>    null<br>  ],<br>  "private_ip_address_allocation": [<br>    "Dynamic"<br>  ]<br>}</pre> | no |
 | <a name="input_os_managed_disk_type"></a> [os\_managed\_disk\_type](#input\_os\_managed\_disk\_type) | Specifies the type of OS Managed Disk which should be created. Possible values are Standard\_LRS or Premium\_LRS. | `string` | `"Standard_LRS"` | no |
+| <a name="input_patch_assessment_mode"></a> [patch\_assessment\_mode](#input\_patch\_assessment\_mode) | (Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault. | `string` | `null` | no |
+| <a name="input_patch_mode"></a> [patch\_mode](#input\_patch\_mode) | (Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault | `string` | `null` | no |
 | <a name="input_plan"></a> [plan](#input\_plan) | An optional plan block | <pre>object({<br>    name      = string<br>    product   = string<br>    publisher = string<br>  })</pre> | `null` | no |
 | <a name="input_postfix"></a> [postfix](#input\_postfix) | (Optional) Desired postfix value for the name. Max 3 chars. | `string` | `""` | no |
 | <a name="input_priority"></a> [priority](#input\_priority) | Specifies the priority of this Virtual Machine. Possible values are Regular and Spot. Defaults to Regular. Changing this forces a new resource to be created. | `string` | `"Regular"` | no |
