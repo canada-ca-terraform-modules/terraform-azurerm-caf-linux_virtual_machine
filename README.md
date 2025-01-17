@@ -174,7 +174,7 @@ No modules.
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | subnet object to which the VM NIC will connect to | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags that will be associated to VM resources | `map(string)` | <pre>{<br>  "exampleTag1": "SomeValue2"<br>}</pre> | no |
 | <a name="input_ultra_ssd_enabled"></a> [ultra\_ssd\_enabled](#input\_ultra\_ssd\_enabled) | Should the capacity to enable Data Disks of the UltraSSD\_LRS storage account type be supported on this Virtual Machine? | `bool` | `false` | no |
-| <a name="input_use_nic_nsg"></a> [use\_nic\_nsg](#input\_use\_nic\_nsg) | Should a NIC NSG be used | `bool` | `true` | no |
+| <a name="input_use_nic_nsg"></a> [use\_nic\_nsg](#input\_use\_nic\_nsg) | Should a NIC NSG be used | `bool` | `false` | no |
 | <a name="input_userDefinedString"></a> [userDefinedString](#input\_userDefinedString) | User defined portion of the server name. Up to 8 chars minus the postfix lenght | `string` | n/a | yes |
 | <a name="input_vm_depends_on"></a> [vm\_depends\_on](#input\_vm\_depends\_on) | List of resources that the VM depend on | `any` | `null` | no |
 | <a name="input_vm_size"></a> [vm\_size](#input\_vm\_size) | Specifies the size of the Virtual Machine. Eg: Standard\_F4 | `string` | n/a | yes |
