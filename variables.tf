@@ -288,7 +288,7 @@ variable "availability_set_id" {
 variable "use_nic_nsg" {
   description = "Should a NIC NSG be used"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "priority" {
