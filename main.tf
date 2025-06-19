@@ -182,6 +182,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
       os_disk, # Prevent restored OS disks from causinf terraform to attempt to re-create the original os disk name and break the restores OS
       custom_data,
       additional_capabilities,
+      gallery_application
     ]
   }
 }
