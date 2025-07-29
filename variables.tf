@@ -75,11 +75,11 @@ variable "encryption_at_host_enabled" {
   default = false
 }
 
-variable "ip_forwarding_enabled" {
-  description = "Enables IP Forwarding on the NIC."
-  type        = bool
-  default     = false
-}
+# variable "ip_forwarding_enabled" {
+#   description = "Enables IP Forwarding on the NIC."
+#   type        = bool
+#   default     = false
+# }
 
 variable "accelerated_networking_enabled" {
   description = "Enables Azure Accelerated Networking using SR-IOV. Only certain VM instance sizes are supported."

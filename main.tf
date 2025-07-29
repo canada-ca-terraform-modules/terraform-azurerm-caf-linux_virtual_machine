@@ -64,7 +64,7 @@ resource "azurerm_network_interface" "NIC" {
   depends_on                    = [var.nic_depends_on]
   location                      = var.resource_group.location
   resource_group_name           = var.resource_group.name
-  ip_forwarding_enabled          = var.ip_forwarding_enabled
+  #ip_forwarding_enabled          = var.ip_forwarding_enabled
   accelerated_networking_enabled = var.accelerated_networking_enabled
   dns_servers                   = var.dnsServers
   dynamic "ip_configuration" {
