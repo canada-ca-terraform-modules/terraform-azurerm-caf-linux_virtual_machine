@@ -16,7 +16,6 @@ output "vm" {
 
 output "pip" {
   description = "The VM public ip if defined"
-  depends_on  = [azurerm_public_ip.VM-EXT-PubIP[0]]
   value       = var.public_ip ? azurerm_public_ip.VM-EXT-PubIP[0] : null
   sensitive   = true
 }

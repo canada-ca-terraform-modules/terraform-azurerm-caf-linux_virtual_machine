@@ -43,6 +43,12 @@ variable "application_security_groups" {
   default     = {}
 }
 
+variable "tags" {
+  description = "Tags to apply to all VM resources created by this module block"
+  type        = map(string)
+  default     = {}
+}
+
 module "linux_virtual_machine" {
   source   = "github.com/canada-ca-terraform-modules/terraform-azurerm-caf-linux_virtual_machine?ref=v3.1.0"
   for_each = var.linux_virtual_machines
@@ -121,4 +127,17 @@ module "linux_virtual_machine" {
   nic_name     = try(each.value.nic_name, null)
   nsg_name     = try(each.value.nsg_name, null)
   os_disk_name = try(each.value.os_disk_name, null)
+
+  # Tags
+  tags = merge(var.tags, try(each.value.tags, {}))
+
+  # Monitoring / extensions
+  monitoringAgent = try(each.value.monitoringAgent, null)
+  dependancyAgent = try(each.value.dependancyAgent, false)
+  encryptDisks    = try(each.value.encryptDisks, null)
+  shutdownConfig  = try(each.value.shutdownConfig, null)
+
+  # Module-level dependency injection (for cross-module sequencing)
+  vm_depends_on  = try(each.value.vm_depends_on, null)
+  nic_depends_on = try(each.value.nic_depends_on, null)
 }
