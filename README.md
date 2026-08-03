@@ -10,6 +10,12 @@ The following security controls can be met through configuration of this templat
 
 * AC-1, AC-10, AC-11, AC-11(1), AC-12, AC-14, AC-16, AC-17, AC-18, AC-18(4), AC-2 , AC-2(5), AC-20(1) , AC-20(3), AC-20(4), AC-24(1), AC-24(11), AC-3, AC-3 , AC-3(1), AC-3(3), AC-3(9), AC-4, AC-4(14), AC-6, AC-6, AC-6(1), AC-6(10), AC-6(11), AC-7, AC-8, AC-8, AC-9, AC-9(1), AI-16, AU-2, AU-3, AU-3(1), AU-3(2), AU-4, AU-5, AU-5(3), AU-8(1), AU-9, CM-10, CM-11(2), CM-2(2), CM-2(4), CM-3, CM-3(1), CM-3(6), CM-5(1), CM-6, CM-6, CM-7, CM-7, IA-1, IA-2, IA-3, IA-4(1), IA-4(4), IA-5, IA-5, IA-5(1), IA-5(13), IA-5(1c), IA-5(6), IA-5(7), IA-9, SC-10, SC-13, SC-15, SC-18(4), SC-2, SC-2, SC-23, SC-28, SC-30(5), SC-5, SC-7, SC-7(10), SC-7(16), SC-7(8), SC-8, SC-8(1), SC-8(4), SI-14, SI-2(1), SI-3
 
+> ⚠️ **`security_rules` default is permissive.** When `use_nic_nsg = true` and no
+> explicit `security_rules` are supplied, the module's default NSG rules allow
+> all inbound and outbound traffic on all ports/protocols. Override
+> `security_rules` with least-privilege rules for any production/GC workload.
+> The default only exists for backward compatibility with pre-existing callers.
+
 ## Dependancies
 
 Hard:
@@ -40,6 +46,12 @@ This module deploys a simple [virtual machine resource](https://docs.microsoft.c
 The following security controls can be met through configuration of this template:
 
 * AC-1, AC-10, AC-11, AC-11(1), AC-12, AC-14, AC-16, AC-17, AC-18, AC-18(4), AC-2 , AC-2(5), AC-20(1) , AC-20(3), AC-20(4), AC-24(1), AC-24(11), AC-3, AC-3 , AC-3(1), AC-3(3), AC-3(9), AC-4, AC-4(14), AC-6, AC-6, AC-6(1), AC-6(10), AC-6(11), AC-7, AC-8, AC-8, AC-9, AC-9(1), AI-16, AU-2, AU-3, AU-3(1), AU-3(2), AU-4, AU-5, AU-5(3), AU-8(1), AU-9, CM-10, CM-11(2), CM-2(2), CM-2(4), CM-3, CM-3(1), CM-3(6), CM-5(1), CM-6, CM-6, CM-7, CM-7, IA-1, IA-2, IA-3, IA-4(1), IA-4(4), IA-5, IA-5, IA-5(1), IA-5(13), IA-5(1c), IA-5(6), IA-5(7), IA-9, SC-10, SC-13, SC-15, SC-18(4), SC-2, SC-2, SC-23, SC-28, SC-30(5), SC-5, SC-7, SC-7(10), SC-7(16), SC-7(8), SC-8, SC-8(1), SC-8(4), SI-14, SI-2(1), SI-3
+
+> ⚠️ **`security_rules` default is permissive.** When `use_nic_nsg = true` and no
+> explicit `security_rules` are supplied, the module's default NSG rules allow
+> all inbound and outbound traffic on all ports/protocols. Override
+> `security_rules` with least-privilege rules for any production/GC workload.
+> The default only exists for backward compatibility with pre-existing callers.
 
 ## Dependancies
 
@@ -145,8 +157,8 @@ module "SRV-SASPR1" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 5.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 5.0.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
 
 ## Modules
 
@@ -219,12 +231,12 @@ No modules.
 | <a name="input_recovery_vault"></a> [recovery\_vault](#input\_recovery\_vault) | The Recovery Services Vault object to use. Changing this forces a new resource to be created. | `any` | `null` | no |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Resourcegroup object that will contain the VM resources | `any` | n/a | yes |
 | <a name="input_secure_boot_enabled"></a> [secure\_boot\_enabled](#input\_secure\_boot\_enabled) | (Optional) Specifies whether secure boot should be enabled on the virtual machine. Changing this forces a new resource to be created. | `bool` | `null` | no |
-| <a name="input_security_rules"></a> [security\_rules](#input\_security\_rules) | Security rules to apply to the VM NIC | `list(map(string))` | <pre>[<br/>  {<br/>    "access": "Allow",<br/>    "description": "Allow all in",<br/>    "destination_address_prefix": "*",<br/>    "destination_port_ranges": "*",<br/>    "direction": "Inbound",<br/>    "name": "AllowAllInbound",<br/>    "priority": "100",<br/>    "protocol": "*",<br/>    "source_address_prefix": "*",<br/>    "source_port_ranges": "*"<br/>  },<br/>  {<br/>    "access": "Allow",<br/>    "description": "Allow all out",<br/>    "destination_address_prefix": "*",<br/>    "destination_port_ranges": "*",<br/>    "direction": "Outbound",<br/>    "name": "AllowAllOutbound",<br/>    "priority": "105",<br/>    "protocol": "*",<br/>    "source_address_prefix": "*",<br/>    "source_port_ranges": "*"<br/>  }<br/>]</pre> | no |
+| <a name="input_security_rules"></a> [security\_rules](#input\_security\_rules) | Security rules to apply to the VM NIC. WARNING: default is permissive (allow all in/out) - override for production use when use\_nic\_nsg = true. | `list(map(string))` | <pre>[<br/>  {<br/>    "access": "Allow",<br/>    "description": "Allow all in",<br/>    "destination_address_prefix": "*",<br/>    "destination_port_ranges": "*",<br/>    "direction": "Inbound",<br/>    "name": "AllowAllInbound",<br/>    "priority": "100",<br/>    "protocol": "*",<br/>    "source_address_prefix": "*",<br/>    "source_port_ranges": "*"<br/>  },<br/>  {<br/>    "access": "Allow",<br/>    "description": "Allow all out",<br/>    "destination_address_prefix": "*",<br/>    "destination_port_ranges": "*",<br/>    "direction": "Outbound",<br/>    "name": "AllowAllOutbound",<br/>    "priority": "105",<br/>    "protocol": "*",<br/>    "source_address_prefix": "*",<br/>    "source_port_ranges": "*"<br/>  }<br/>]</pre> | no |
 | <a name="input_serverType"></a> [serverType](#input\_serverType) | 3 chars server type code for the VM. | `string` | `"SRV"` | no |
 | <a name="input_shutdownConfig"></a> [shutdownConfig](#input\_shutdownConfig) | Should the VM shutdown at the time specified. See option-30-autoshutdown.tf file for example | <pre>object({<br/>    autoShutdownStatus             = string<br/>    autoShutdownTime               = string<br/>    autoShutdownTimeZone           = string<br/>    autoShutdownNotificationStatus = string<br/>  })</pre> | `null` | no |
 | <a name="input_source_image_id"></a> [source\_image\_id](#input\_source\_image\_id) | (Optional) The ID of the Image which this Virtual Machine should be created from. Changing this forces a new resource to be created. | `string` | `null` | no |
 | <a name="input_ssh_key"></a> [ssh\_key](#input\_ssh\_key) | The Public SSH Key. | `string` | `null` | no |
-| <a name="input_storage_image_reference"></a> [storage\_image\_reference](#input\_storage\_image\_reference) | (Optional) This block provisions the Virtual Machine from one of two sources: an Azure Platform Image (e.g. Ubuntu/Windows Server) or a Custom Image. Refer to https://www.terraform.io/docs/providers/azurerm/r/virtual_machine.html for more details. | <pre>object({<br/>    publisher = string<br/>    offer     = string<br/>    sku       = string<br/>    version   = string<br/>  })</pre> | <pre>{<br/>  "offer": "RHEL",<br/>  "publisher": "RedHat",<br/>  "sku": "7.4",<br/>  "version": "latest"<br/>}</pre> | no |
+| <a name="input_storage_image_reference"></a> [storage\_image\_reference](#input\_storage\_image\_reference) | (Optional) This block provisions the Virtual Machine from one of two sources: an Azure Platform Image (e.g. Ubuntu/Windows Server) or a Custom Image. Refer to https://www.terraform.io/docs/providers/azurerm/r/virtual_machine.html for more details. | <pre>object({<br/>    publisher = string<br/>    offer     = string<br/>    sku       = string<br/>    version   = string<br/>  })</pre> | <pre>{<br/>  "offer": "RHEL",<br/>  "publisher": "RedHat",<br/>  "sku": "9-lvm",<br/>  "version": "latest"<br/>}</pre> | no |
 | <a name="input_storage_os_disk"></a> [storage\_os\_disk](#input\_storage\_os\_disk) | This block describe the parameters for the OS disk. Refer to https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine#os_disk for more details. | <pre>object({<br/>    caching       = string<br/>    create_option = string<br/>    disk_size_gb  = number<br/>  })</pre> | <pre>{<br/>  "caching": "ReadWrite",<br/>  "create_option": "FromImage",<br/>  "disk_size_gb": null<br/>}</pre> | no |
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | subnet object to which the VM NIC will connect to | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags that will be associated to VM resources | `map(string)` | <pre>{<br/>  "exampleTag1": "SomeValue1",<br/>  "exampleTag2": "SomeValue2"<br/>}</pre> | no |

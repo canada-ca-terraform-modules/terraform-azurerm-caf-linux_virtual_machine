@@ -2,16 +2,12 @@
 # Declares the variables consumed by the module block so L2 callers can wire
 # their own var.* values in, and the module block itself. Copy this file into
 # an ESLZ L2 blueprint and populate linux_virtual_machines.tfvars.
-
-terraform {
-  required_version = ">= 1.9"
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 5.0"
-    }
-  }
-}
+#
+# Provider requirement for this module: azurerm ~> 5.0, required_version >= 1.9
+# (see providers.tf in the module root). Do NOT add a `terraform {}` block to
+# this file - it is copied verbatim into an L2 blueprint that already declares
+# its own root `terraform {}` block, and a second one here would collide with
+# it (duplicate required_providers/required_version block error).
 
 variable "linux_virtual_machines" {
   description = "Map of Linux VM configuration objects. See ESLZ/linux_virtual_machine.tfvars for examples of every supported key."

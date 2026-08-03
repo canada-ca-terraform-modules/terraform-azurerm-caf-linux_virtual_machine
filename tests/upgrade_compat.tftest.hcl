@@ -1,8 +1,10 @@
 # tests/upgrade_compat.tftest.hcl
 # State-chaining upgrade safety test: simulates a VM already deployed with the
 # pre-upgrade (azurerm >= 1.32.0) argument set, then plans the upgraded code
-# (azurerm ~> 5.0, with new optional args) against that state to prove no
-# replacement/destroy is triggered by the upgrade itself.
+# (azurerm ~> 5.0, with new optional args) against that state to prove
+# resource addressing is unchanged by the upgrade (no accidental destroy from
+# a rename/removal). It does NOT prove ForceNew-safety for individual new
+# arguments - see the scope note on the second run below.
 
 mock_provider "azurerm" {}
 mock_provider "random" {}
@@ -44,12 +46,24 @@ run "baseline_apply" {
 }
 
 # Step 2: plan the upgraded code (new optional args added) against that state
-run "upgrade_plan_no_replacement" {
+#
+# Scope note: mock_provider does not enforce ForceNew semantics - a real
+# provider plan would show `action = replace` for any ForceNew attribute
+# change (e.g. secure_boot_enabled / vtpm_enabled, both
+# `Changing this forces a new resource to be created`), but terraform test's
+# assert blocks can only inspect planned attribute values, not the change
+# action, so this run cannot detect that here. It only proves resource
+# *addressing* is stable across the upgrade (no accidental destroy from a
+# rename/removal) - not full ForceNew safety. secure_boot_enabled and
+# vtpm_enabled are deliberately left out of this run's variables for that
+# reason; user_data (not ForceNew) is included as a genuinely safe additive
+# check. Verify ForceNew-triggering Trusted Launch retrofits against a real
+# provider with the terraform-module-upgrade-probe skill before applying to
+# an already-deployed VM.
+run "upgrade_plan_resource_addressing_stable" {
   command = plan
   variables {
-    secure_boot_enabled = true
-    vtpm_enabled        = true
-    user_data           = "IyEvYmluL3NoCmVjaG8gaGVsbG8="
+    user_data = "IyEvYmluL3NoCmVjaG8gaGVsbG8="
   }
 
   assert {

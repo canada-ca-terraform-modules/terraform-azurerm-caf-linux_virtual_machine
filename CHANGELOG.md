@@ -28,6 +28,22 @@ All notable changes to this module are documented in this file, in the
 - `.gitignore` replaced with the standard module template.
 - `outputs.tf`: `vm`, `pip`, and `nic` outputs marked `sensitive = true` (they expose full
   resource objects).
+- `variables.tf`: `storage_image_reference` default bumped from RHEL 7.4 (end-of-support in
+  2024) to RHEL 9-lvm. Safe for existing deployments — this argument is already in
+  `azurerm_linux_virtual_machine.VM`'s `lifecycle.ignore_changes` list, so it does not force
+  replacement.
+- `variables.tf`: `security_rules` description now carries an explicit warning that its
+  default (allow all in/out) is permissive and exists only for backward compatibility;
+  same warning added to `README.md`/`doc.md`.
+- `ESLZ/linux_virtual_machine.tf`: removed the standalone `terraform {}` block — it collided
+  with the L2 blueprint's own root `terraform {}` block when copied verbatim. Replaced with a
+  comment documenting the provider requirement; added `ESLZ/.tflint.hcl` to keep `tflint
+  --recursive` clean for that directory without a live `terraform {}` block.
+- `tests/upgrade_compat.tftest.hcl`: renamed `upgrade_plan_no_replacement` to
+  `upgrade_plan_resource_addressing_stable` and dropped `secure_boot_enabled`/`vtpm_enabled`
+  from its variables — both are ForceNew in the real provider (would trigger a replacement),
+  but `mock_provider` does not enforce ForceNew semantics, so the old name and assertions
+  overstated what the run actually proves.
 
 ### Fixed
 
@@ -35,6 +51,13 @@ All notable changes to this module are documented in this file, in the
 - `variables.tf`: `disable_password_authentication` default corrected from the string
   `"false"` to the boolean `false`.
 - `variables.tf`: `encryption_at_host_enabled` was missing a `type` argument.
+- `outputs.tf`: `pip` output's invalid `depends_on = [azurerm_public_ip.VM-EXT-PubIP[0]]`
+  removed — `depends_on` does not support instance-indexed references, and the resource
+  count is `0` when `public_ip = false`, which would error against a real provider.
+- `ESLZ/linux_virtual_machine.tf`: `tags` was not wired to the module call, so every VM
+  silently received the module's own example-tag default regardless of caller input;
+  `monitoringAgent`, `dependancyAgent`, `encryptDisks`, `shutdownConfig`, `vm_depends_on`,
+  and `nic_depends_on` were also unwired (silent no-ops for callers setting those keys).
 
 ### Known blockers
 

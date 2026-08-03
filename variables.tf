@@ -118,7 +118,12 @@ variable "load_balancer_backend_address_pools_ids" {
 }
 
 variable "security_rules" {
-  description = "Security rules to apply to the VM NIC"
+  # WARNING: the default value below is permissive (allow all inbound + all
+  # outbound, all ports/protocols). It only takes effect when use_nic_nsg =
+  # true and no explicit security_rules are supplied. Override this variable
+  # with least-privilege rules for any production/GC workload NSG. See
+  # README.md "Security" section.
+  description = "Security rules to apply to the VM NIC. WARNING: default is permissive (allow all in/out) - override for production use when use_nic_nsg = true."
   type        = list(map(string))
   default = [
     {
@@ -219,10 +224,15 @@ variable "storage_image_reference" {
     sku       = string
     version   = string
   })
+  # Default is a currently-supported RHEL SKU (9-lvm). The previous default
+  # (RHEL 7.4) reached end-of-support in 2024 - callers relying on the
+  # default no longer got a patchable image. Safe to change: this argument
+  # is in azurerm_linux_virtual_machine.VM's lifecycle.ignore_changes list
+  # in main.tf, so it does not force replacement of already-deployed VMs.
   default = {
     publisher = "RedHat",
     offer     = "RHEL",
-    sku       = "7.4",
+    sku       = "9-lvm",
     version   = "latest"
   }
 }
