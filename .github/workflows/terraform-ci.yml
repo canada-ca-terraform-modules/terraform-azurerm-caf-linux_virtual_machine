@@ -18,7 +18,7 @@ jobs:
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v6.3.0
         with:
-          tflint_version: "~>0.64"
+          tflint_version: v0.64.0
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
       - name: Terraform Init
