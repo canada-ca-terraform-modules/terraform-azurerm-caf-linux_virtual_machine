@@ -24,6 +24,47 @@ Optional (depending on options configured):
 
 ## Usage
 
+### ESLZ module block (`ESLZ/linux_virtual_machine.tf`)
+
+```hcl
+module "linux_virtual_machine" {
+  source   = "github.com/canada-ca-terraform-modules/terraform-azurerm-caf-linux_virtual_machine?ref=v3.1.0"
+  for_each = var.linux_virtual_machines
+
+  env                 = each.value.env
+  userDefinedString   = each.value.userDefinedString
+  resource_group      = var.resource_groups[each.value.resource_group_key]
+  subnet              = var.subnets[each.value.subnet_key]
+  admin_username      = each.value.admin_username
+  vm_size             = each.value.vm_size
+  ssh_key             = try(each.value.ssh_key, null)
+  identity            = try(each.value.identity, null)
+  secure_boot_enabled = try(each.value.secure_boot_enabled, null)
+  vtpm_enabled        = try(each.value.vtpm_enabled, null)
+}
+```
+
+### ESLZ tfvars pattern (`ESLZ/linux_virtual_machine.tfvars`)
+
+```hcl
+linux_virtual_machines = {
+  SRV-SASPR1 = {
+    env                = "Prod"
+    userDefinedString  = "sasapp1"
+    resource_group_key = "Project"
+    subnet_key         = "app"
+    admin_username     = "adminuser"
+    vm_size            = "Standard_D2s_v5"
+    ssh_key            = "ssh-rsa AAAA..."
+  }
+}
+```
+
+See `ESLZ/linux_virtual_machine.tf` and `ESLZ/linux_virtual_machine.tfvars` in this repo for the
+full module block and every supported tfvars key.
+
+### Legacy per-instance pattern (pre-3.x, still supported)
+
 ```hcl
 module "SRV-SASPR1" {
   count               = var.vmConfigs.SRV-SASPR1.deploy ? 1 : 0

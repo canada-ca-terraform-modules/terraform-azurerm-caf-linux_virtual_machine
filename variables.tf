@@ -3,7 +3,7 @@ variable "tags" {
   type        = map(string)
   default = {
     "exampleTag1" = "SomeValue1"
-    "exampleTag1" = "SomeValue2"
+    "exampleTag2" = "SomeValue2"
   }
 }
 
@@ -29,10 +29,10 @@ variable "postfix" {
   default     = ""
 }
 
-variable "computer_name"{
+variable "computer_name" {
   description = "(Optional) VM OS Hostname"
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "data_disks" {
@@ -72,7 +72,9 @@ variable "dnsServers" {
 }
 
 variable "encryption_at_host_enabled" {
-  default = false
+  description = "(Optional) Should all of the disks (including the temp disk) attached to this Virtual Machine be encrypted by enabling Encryption at Host?"
+  type        = bool
+  default     = false
 }
 
 variable "ip_forwarding_enabled" {
@@ -195,7 +197,7 @@ variable "ssh_key" {
 variable "disable_password_authentication" {
   description = "Specifies whether password authentication should be disabled. If set to false, an admin_password must be specified."
   type        = bool
-  default     = "false"
+  default     = false
 }
 
 variable "custom_data" {
@@ -227,8 +229,8 @@ variable "storage_image_reference" {
 
 variable "source_image_id" {
   description = "(Optional) The ID of the Image which this Virtual Machine should be created from. Changing this forces a new resource to be created."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "plan" {
@@ -336,6 +338,81 @@ variable "patch_mode" {
 
 variable "patch_assessment_mode" {
   description = "(Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault."
+  type        = string
+  default     = null
+}
+
+variable "identity" {
+  description = "(Optional) An identity block. Object with 'type' (SystemAssigned, UserAssigned or 'SystemAssigned, UserAssigned') and optional 'identity_ids' (list of User Assigned Managed Identity IDs). See variable.tf file for example"
+  type = object({
+    type         = string
+    identity_ids = optional(list(string))
+  })
+  default = null
+  /*
+    Example:
+
+    identity = {
+      type         = "UserAssigned"
+      identity_ids = ["/subscriptions/.../resourceGroups/.../providers/Microsoft.ManagedIdentity/userAssignedIdentities/example"]
+    }
+  */
+}
+
+variable "secure_boot_enabled" {
+  description = "(Optional) Specifies whether secure boot should be enabled on the virtual machine. Changing this forces a new resource to be created."
+  type        = bool
+  default     = null
+}
+
+variable "vtpm_enabled" {
+  description = "(Optional) Specifies whether vTPM should be enabled on the virtual machine. Changing this forces a new resource to be created."
+  type        = bool
+  default     = null
+}
+
+variable "user_data" {
+  description = "(Optional) The Base64-Encoded User Data which should be used for this Virtual Machine."
+  type        = string
+  default     = null
+}
+
+variable "public_ip_zones" {
+  description = "(Optional) A collection containing the availability zone(s) to allocate the Public IP(s) in. Changing this forces a new resource to be created."
+  type        = list(string)
+  default     = null
+}
+
+# --- Pattern 12: optional overrides for auto-generated resource names ---
+# These allow callers whose already-deployed resource names diverge from the
+# module's naming formula to pin the real name without forcing destroy/recreate.
+
+variable "vm_name" {
+  description = "(Optional) Override the auto-generated VM name. Defaults to the {env}{serverType}-{userDefinedString}{postfix} naming convention."
+  type        = string
+  default     = null
+}
+
+variable "nic_name" {
+  description = "(Optional) Override the auto-generated NIC name. Defaults to '<vm-name>-nic1'."
+  type        = string
+  default     = null
+}
+
+variable "nsg_name" {
+  description = "(Optional) Override the auto-generated NSG name. Defaults to '<vm-name>-nsg'."
+  type        = string
+  default     = null
+}
+
+variable "os_disk_name" {
+  description = "(Optional) Override the auto-generated OS disk name. Defaults to '<vm-name>-osdisk1'."
+  type        = string
+  default     = null
+}
+
+variable "boot_diagnostic_storage_account_name" {
+  description = "(Optional) Override the auto-generated boot diagnostic storage account name."
   type        = string
   default     = null
 }
