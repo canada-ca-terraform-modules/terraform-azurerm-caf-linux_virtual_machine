@@ -1,6 +1,23 @@
-test/.terraform.tfstate.lock.info
-test/terraform.tfstate.backup
-test/terraform.tfstate
-test/.terraform
-test/crash.log
-.terraform/plugins/windows_amd64/lock.json
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# ignore all tfvars (may contain secrets)
+*.tfvars
+*.tfvars.json
+# keep ESLZ example files tracked
+!ESLZ/*.tfvars
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+

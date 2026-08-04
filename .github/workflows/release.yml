@@ -1,0 +1,65 @@
+name: Release on merge
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: master
+
+      - name: Extract version from ESLZ/linux_virtual_machine.tf
+        id: version
+        run: |
+          VERSION=$(grep -oP 'ref=\Kv[0-9]+\.[0-9]+\.[0-9]+' ESLZ/linux_virtual_machine.tf | head -1)
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not extract a vX.Y.Z ref from ESLZ/linux_virtual_machine.tf"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether this version is already released
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # PR title/body are untrusted user input - passed only via env vars
+      # (never interpolated directly into the run: script) to avoid shell/
+      # script injection. See:
+      # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#understanding-the-risk-of-script-injections
+      - name: Create release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          NOTES="$PR_BODY"
+          if [ -z "$NOTES" ]; then
+            NOTES="No description provided in PR #$PR_NUMBER ($PR_TITLE)."
+          fi
+          printf '%s' "$NOTES" > /tmp/release-notes.md
+
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --notes-file /tmp/release-notes.md \
+            --target master

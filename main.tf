@@ -1,13 +1,6 @@
-terraform {
-  required_version = ">= 0.12"
-  required_providers {
-    azurerm = ">= 1.32.0"
-  }
-}
-
 resource "azurerm_network_security_group" "NSG" {
   count               = var.use_nic_nsg ? 1 : 0
-  name                = "${local.vm-name}-nsg"
+  name                = var.nsg_name != null ? var.nsg_name : "${local.vm-name}-nsg"
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   dynamic "security_rule" {
@@ -41,7 +34,7 @@ resource "azurerm_network_security_group" "NSG" {
 
 resource "azurerm_storage_account" "boot_diagnostic" {
   count                    = var.boot_diagnostic ? 1 : 0
-  name                     = local.storageName
+  name                     = var.boot_diagnostic_storage_account_name != null ? var.boot_diagnostic_storage_account_name : local.storageName
   resource_group_name      = var.resource_group.name
   location                 = var.resource_group.location
   account_tier             = "Standard"
@@ -56,17 +49,18 @@ resource "azurerm_public_ip" "VM-EXT-PubIP" {
   resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
+  zones               = var.public_ip_zones
   tags                = local.tags
 }
 
 resource "azurerm_network_interface" "NIC" {
-  name                          = "${local.vm-name}-nic1"
-  depends_on                    = [var.nic_depends_on]
-  location                      = var.resource_group.location
-  resource_group_name           = var.resource_group.name
+  name                           = var.nic_name != null ? var.nic_name : "${local.vm-name}-nic1"
+  depends_on                     = [var.nic_depends_on]
+  location                       = var.resource_group.location
+  resource_group_name            = var.resource_group.name
   ip_forwarding_enabled          = var.ip_forwarding_enabled
   accelerated_networking_enabled = var.accelerated_networking_enabled
-  dns_servers                   = var.dnsServers
+  dns_servers                    = var.dnsServers
   dynamic "ip_configuration" {
     for_each = var.nic_ip_configuration.private_ip_address_allocation
     content {
@@ -107,7 +101,7 @@ moved {
 }
 
 resource "azurerm_linux_virtual_machine" "VM" {
-  name                            = local.vm-name
+  name                            = var.vm_name != null ? var.vm_name : local.vm-name
   depends_on                      = [var.vm_depends_on]
   location                        = var.resource_group.location
   resource_group_name             = var.resource_group.name
@@ -116,6 +110,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   disable_password_authentication = var.disable_password_authentication
   computer_name                   = var.computer_name
   custom_data                     = var.custom_data
+  user_data                       = var.user_data
   size                            = var.vm_size
   priority                        = var.priority
   eviction_policy                 = local.eviction_policy
@@ -125,6 +120,15 @@ resource "azurerm_linux_virtual_machine" "VM" {
   license_type                    = var.license_type
   patch_mode                      = var.patch_mode
   patch_assessment_mode           = var.patch_assessment_mode
+  secure_boot_enabled             = var.secure_boot_enabled
+  vtpm_enabled                    = var.vtpm_enabled
+  dynamic "identity" {
+    for_each = var.identity != null ? [var.identity] : []
+    content {
+      type         = identity.value.type
+      identity_ids = try(identity.value.identity_ids, null)
+    }
+  }
   dynamic "admin_ssh_key" {
     for_each = local.ssh_key
     content {
@@ -152,7 +156,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
   provision_vm_agent = var.provision_vm_agent
   os_disk {
-    name                 = "${local.vm-name}-osdisk1"
+    name                 = var.os_disk_name != null ? var.os_disk_name : "${local.vm-name}-osdisk1"
     caching              = var.storage_os_disk.caching
     storage_account_type = var.os_managed_disk_type
     disk_size_gb         = var.storage_os_disk.disk_size_gb
@@ -170,7 +174,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
-  tags = merge(local.tags,[var.computer_name != null ? {"OsHostname" = var.computer_name}: null]...)
+  tags = merge(local.tags, [var.computer_name != null ? { "OsHostname" = var.computer_name } : null]...)
   lifecycle {
     ignore_changes = [
       # Ignore changes to tags, e.g. because a management agent
@@ -192,7 +196,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
 resource "azurerm_managed_disk" "data_disks" {
   for_each = var.data_disks
 
-  name                 = "${local.vm-name}-datadisk${each.value.lun + 1}"
+  name                 = lookup(each.value, "name", "${local.vm-name}-datadisk${each.value.lun + 1}")
   location             = var.resource_group.location
   resource_group_name  = var.resource_group.name
   storage_account_type = lookup(each.value, "storage_account_type", var.data_managed_disk_type)
@@ -208,7 +212,6 @@ resource "azurerm_managed_disk" "data_disks" {
       source_resource_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
       tags,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
       zone,               # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
-      
     ]
   }
 }
@@ -223,7 +226,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disks" {
   caching            = lookup(each.value, "caching", "ReadWrite")
   lifecycle {
     ignore_changes = [
-      managed_disk_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
+      managed_disk_id,    # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
       virtual_machine_id, # Prevent restored data disks from causing terraform to attempt to re-create the original os disk name and break the restores OS
     ]
   }
