@@ -1,0 +1,124 @@
+name: Live test
+
+# End-to-end live-test PR gate (ticket 12): applies the target branch's
+# test/live/ harness as a live baseline, then plans/applies the PR branch's
+# checkout of the same harness against that same live state (ticket 11),
+# authenticated via OIDC (ticket 09). The PR-checkout plan is classified by
+# the published canada-ca-terraform-modules/live-test-actions/classify-plan
+# action (ticket 08) - no local copy of classify_plan.py lives in this repo.
+# The classification is reported via a PR comment and a job-summary/warning
+# annotation only - it never fails the job, so this check cannot block a
+# merge. The plan summary is always posted as a PR comment, and the live
+# resources are always destroyed, regardless of outcome.
+#
+# Concurrency (ticket 13): a new push to the same PR cancels its prior
+# in-flight run so two runs never collide on the shared state file. Note
+# that cancellation defeats the in-job `if: always()` destroy step below --
+# there is no automated backstop for orphaned resources left by a
+# cancelled/crashed run; the live-test-sweeper.yml workflow that previously
+# filled this role has been removed, so any leftovers must be cleaned up
+# manually (sandbox resource groups tagged `pr-number`).
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - "*.tf"
+      - "test/live/**"
+
+concurrency:
+  group: live-test-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  live-test:
+    runs-on: ubuntu-latest
+    environment: live-test
+    env:
+      TF_VAR_pr_number: ${{ github.event.number }}
+    steps:
+      # runner.temp is only resolvable once a runner is allocated, so the
+      # shared state path can't live in the job-level `env:` above (that's
+      # evaluated before a runner exists) - compute it here instead, via the
+      # real $RUNNER_TEMP env var, and export it for every later step.
+      - name: Compute shared state path
+        run: echo "LIVE_TEST_STATE=${RUNNER_TEMP}/live-test-${TF_VAR_pr_number}.tfstate" >> "$GITHUB_ENV"
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Checkout target branch
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: baseline
+
+      - uses: hashicorp/setup-terraform@v4.0.1
+        with:
+          terraform_version: "~> 1.9"
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Baseline apply (target branch)
+        working-directory: baseline/test/live
+        run: |
+          terraform init -backend-config="path=${LIVE_TEST_STATE}"
+          terraform apply -auto-approve -var-file=config/linux_virtual_machine.tfvars
+
+      - name: PR plan
+        id: tf_plan
+        working-directory: pr/test/live
+        run: |
+          terraform init -backend-config="path=${LIVE_TEST_STATE}"
+          terraform plan -var-file=config/linux_virtual_machine.tfvars -out=tfplan
+          terraform show -json tfplan > plan.json
+
+      - name: PR apply
+        working-directory: pr/test/live
+        run: terraform apply -auto-approve tfplan
+
+      - name: Classify plan
+        id: classify
+        if: always()
+        uses: canada-ca-terraform-modules/live-test-actions/classify-plan@v1
+        with:
+          plan-json: pr/test/live/plan.json
+
+      - name: Post PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.number }}
+          PLAN_SUMMARY: ${{ steps.classify.outputs.summary }}
+        run: gh pr comment "$PR_NUMBER" --body "$PLAN_SUMMARY"
+
+      - name: Destroy (PR checkout, shared state)
+        if: always()
+        working-directory: pr/test/live
+        run: |
+          terraform init -backend-config="path=${LIVE_TEST_STATE}"
+          terraform destroy -auto-approve -var-file=config/linux_virtual_machine.tfvars
+
+      - name: Report classification (non-blocking)
+        if: always()
+        run: |
+          classification="${{ steps.classify.outputs.classification }}"
+          echo "### Live-test classification: \`${classification:-unknown}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$classification" = "block" ]; then
+            echo "::warning::Live-test classified this plan as BLOCK (destroy/replace detected). Not failing the check - see PR comment for details."
+          fi
