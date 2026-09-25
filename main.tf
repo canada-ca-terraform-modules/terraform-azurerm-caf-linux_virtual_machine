@@ -101,27 +101,28 @@ moved {
 }
 
 resource "azurerm_linux_virtual_machine" "VM" {
-  name                            = var.vm_name != null ? var.vm_name : local.vm-name
-  depends_on                      = [var.vm_depends_on]
-  location                        = var.resource_group.location
-  resource_group_name             = var.resource_group.name
-  admin_username                  = var.admin_username
-  admin_password                  = var.admin_password
-  disable_password_authentication = var.disable_password_authentication
-  computer_name                   = var.computer_name
-  custom_data                     = var.custom_data
-  user_data                       = var.user_data
-  size                            = var.vm_size
-  priority                        = var.priority
-  eviction_policy                 = local.eviction_policy
-  network_interface_ids           = [azurerm_network_interface.NIC.id]
-  availability_set_id             = var.availability_set_id
-  encryption_at_host_enabled      = var.encryption_at_host_enabled
-  license_type                    = var.license_type
-  patch_mode                      = var.patch_mode
-  patch_assessment_mode           = var.patch_assessment_mode
-  secure_boot_enabled             = var.secure_boot_enabled
-  vtpm_enabled                    = var.vtpm_enabled
+  name                                                   = var.vm_name != null ? var.vm_name : local.vm-name
+  depends_on                                             = [var.vm_depends_on]
+  location                                               = var.resource_group.location
+  resource_group_name                                    = var.resource_group.name
+  admin_username                                         = var.admin_username
+  admin_password                                         = var.admin_password
+  disable_password_authentication                        = var.disable_password_authentication
+  computer_name                                          = var.computer_name
+  custom_data                                            = var.custom_data
+  user_data                                              = var.user_data
+  size                                                   = var.vm_size
+  priority                                               = var.priority
+  eviction_policy                                        = local.eviction_policy
+  network_interface_ids                                  = [azurerm_network_interface.NIC.id]
+  availability_set_id                                    = var.availability_set_id
+  encryption_at_host_enabled                             = var.encryption_at_host_enabled
+  license_type                                           = var.license_type
+  patch_mode                                             = var.patch_mode
+  patch_assessment_mode                                  = var.patch_assessment_mode
+  bypass_platform_safety_checks_on_user_schedule_enabled = var.bypass_platform_safety_checks_on_user_schedule_enabled
+  secure_boot_enabled                                    = var.secure_boot_enabled
+  vtpm_enabled                                           = var.vtpm_enabled
   dynamic "identity" {
     for_each = var.identity != null ? [var.identity] : []
     content {
@@ -188,7 +189,8 @@ resource "azurerm_linux_virtual_machine" "VM" {
       additional_capabilities,
       gallery_application,
       plan,
-      source_image_reference
+      source_image_reference,
+      boot_diagnostics # Real VMs may have boot diagnostics configured outside of Terraform (e.g. a differently-provisioned storage account); the module's own boot_diagnostic variable can't represent that, and forcing it on would create an unwanted new storage account.
     ]
   }
 }
